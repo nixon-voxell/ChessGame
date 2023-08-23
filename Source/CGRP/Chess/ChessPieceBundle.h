@@ -17,23 +17,23 @@ struct CGRP_API FChessPieceBundle : public FTableRowBase
 public:
 	GENERATED_BODY()
 
-  UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Chess Pieces")
-  AChessItem* Pawn;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Chess Pieces")
+	AChessItem* Pawn;
 
-  UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Chess Pieces")
-  AChessItem* Rook;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Chess Pieces")
+	AChessItem* Rook;
 
-  UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Chess Pieces")
-  AChessItem* Knight;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Chess Pieces")
+	AChessItem* Knight;
 
-  UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Chess Pieces")
-  AChessItem* BishopPiece;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Chess Pieces")
+	AChessItem* BishopPiece;
 
-  UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Chess Pieces")
-  AChessItem* QueenPiece;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Chess Pieces")
+	AChessItem* QueenPiece;
 
-  UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Chess Pieces")
-  AChessItem* KingPiece;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Chess Pieces")
+	AChessItem* KingPiece;
 
 	FChessPieceBundle();
 	~FChessPieceBundle();

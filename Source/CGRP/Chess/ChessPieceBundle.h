@@ -35,6 +35,10 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Chess Pieces")
 	AChessItem* KingPiece;
 
+	AChessItem* Pieces[7];
+
+	void Initialize();
+
 	FChessPieceBundle();
 	~FChessPieceBundle();
 };

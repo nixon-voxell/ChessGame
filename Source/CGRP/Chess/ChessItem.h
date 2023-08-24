@@ -4,7 +4,7 @@
 #include "GameFramework/Actor.h"
 #include "ChessItem.generated.h"
 
-UCLASS()
+UCLASS(Blueprintable)
 class CGRP_API AChessItem : public AActor
 {
 	GENERATED_BODY()

@@ -16,6 +16,16 @@ void AChessBoard::BeginPlay()
 	Super::BeginPlay();
 	this->ChessPieceBundle.Initialize();
 	// TODO: generate chess tiles and chess pieces
+
+	for (int y = 0; y < 8; y++)
+	{
+		for (int x = 0; x < 8; x++)
+		{
+			// instantiate chess pieces
+			// FTransform SpawnLocation;
+      // GetWorld()->SpawnActor<AMyFirstActor>( AMyFirstActor::StaticClass(), &SpawnLocation);
+		}
+	}
 }
 
 // Called every frame

@@ -3,35 +3,53 @@
 
 #include "ChessBoard.h"
 
-// Sets default values
-AChessBoard::AChessBoard()
+void AChessBoard::SpawnChessPiece(int32 x, int32 y, FChessBoardLayout* BoardLayout)
 {
-	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
+	int32 boardIndex = x + y * 8;
+	int32 pieceIndex = BoardLayout->GetPieceIndex(boardIndex);
+	bool isBlack = pieceIndex < 0;
+	AChessItem* chessPiece = this->ChessPieceBundle.Pieces[FMath::Abs(pieceIndex)];
+
+	// NULL indicates that there shouldn't be any chess pieces there
+	if (chessPiece == NULL)
+	{
+		return;
+	}
+
+	FTransform spawnLocation = FTransform::Identity;
+	spawnLocation.SetLocation(FVector(x, y, this->ChessPieceElevation));
+	if (isBlack)
+	{
+		spawnLocation.SetRotation(this->BlackRotation);
+	}
+	else
+	{
+		spawnLocation.SetRotation(this->WhiteRotation);
+	}
+
+	// Spawn chess piece
+	AChessItem* spawnedPiece = this->GetWorld()->SpawnActor<AChessItem>(chessPiece->GetClass(), spawnLocation);
 }
 
-// Called when the game starts or when spawned
 void AChessBoard::BeginPlay()
 {
 	Super::BeginPlay();
 	this->ChessPieceBundle.Initialize();
-	// TODO: generate chess tiles and chess pieces
+	this->InitBoardLayout = this->InitBoardLayoutRow.GetRow<FChessBoardLayout>(
+		this->InitBoardLayoutRow.RowName.ToString()
+	);
 
+	// Generate chess tiles and chess pieces
 	for (int y = 0; y < 8; y++)
 	{
 		for (int x = 0; x < 8; x++)
 		{
-			// instantiate chess pieces
-			// FTransform SpawnLocation;
-      // GetWorld()->SpawnActor<AMyFirstActor>( AMyFirstActor::StaticClass(), &SpawnLocation);
+			this->SpawnChessPiece(x, y, this->InitBoardLayout);
 		}
 	}
 }
 
-// Called every frame
 void AChessBoard::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
 }
-

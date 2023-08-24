@@ -3,7 +3,7 @@
 #include "CoreMinimal.h"
 #include "Engine/DataTable.h"
 
-#include "GameFramework/Character.h"
+#include "PieceType.h"
 #include "ChessBoardLayout.generated.h"
 
 USTRUCT(BlueprintType)
@@ -13,9 +13,9 @@ public:
 	GENERATED_BODY()
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Layout")
-	TArray<int32> Layout;
+	TArray<PieceType> Layout;
 
-	int32 GetItemIndex(int32 BoardIndex);
+	int32 GetPieceIndex(int32 BoardIndex);
 
 	FChessBoardLayout();
 	~FChessBoardLayout();

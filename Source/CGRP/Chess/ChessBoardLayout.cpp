@@ -8,7 +8,7 @@ FChessBoardLayout::~FChessBoardLayout()
 {
 }
 
-int32 FChessBoardLayout::GetItemIndex(int32 BoardIndex)
+int32 FChessBoardLayout::GetPieceIndex(int32 BoardIndex)
 {
-	return this->Layout[BoardIndex];
+	return (int32)this->Layout[BoardIndex];
 }

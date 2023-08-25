@@ -8,7 +8,7 @@
 #include "ChessItem.h"
 #include "ChessPieceBundle.h"
 #include "ChessBoardLayout.h"
-#include "Piece/PieceConfig.h"
+#include "PieceConfig.h"
 #include "ChessBoard.generated.h"
 
 UCLASS()

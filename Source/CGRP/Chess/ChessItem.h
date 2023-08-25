@@ -13,7 +13,7 @@ public:
 	// Sets default values for this actor's properties
 	AChessItem();
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Chess")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	int32 BoardIndex;
 
 protected:

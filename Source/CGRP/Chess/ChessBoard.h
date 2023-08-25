@@ -18,13 +18,16 @@ class CGRP_API AChessBoard : public AActor
 	
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TSubclassOf<AChessItem> ChessTile;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FDataTableRowHandle InitBoardLayoutRow;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FChessPieceBundle ChessPieceBundle;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	double ChessPieceElevation = 1.0;
+	double ChessPieceElevation = 50.0;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	double TileSize = 100.0;
@@ -40,6 +43,7 @@ protected:
 
 protected:
 	void SpawnChessPiece(int32 x, int32 y, FChessBoardLayout* BoardLayout);
+	void SpawnChessTile(int32 x, int32 y);
 
 	virtual void BeginPlay() override;
 

@@ -25,6 +25,20 @@ void AChessBoard::SpawnChessPiece(int32 x, int32 y, FChessBoardLayout* BoardLayo
 
 	// Spawn chess piece
 	AChessItem* spawnedPiece = this->GetWorld()->SpawnActor<AChessItem>(chessPiece->GetClass(), spawnTransform);
+	spawnedPiece->BoardIndex = boardIndex;
+}
+
+void AChessBoard::SpawnChessTile(int32 x, int32 y)
+{
+	int32 boardIndex = x + y * 8;
+
+	FTransform spawnTransform = FTransform::Identity;
+	FVector location = FVector(-x * this->TileSize, y * this->TileSize, 0.0);
+	spawnTransform.SetLocation(location);
+
+	// Spawn chess tile
+	AChessItem* spawnedTile = this->GetWorld()->SpawnActor<AChessItem>(this->ChessTile.GetDefaultObject()->GetClass(), spawnTransform);
+	spawnedTile->BoardIndex = boardIndex;
 }
 
 void AChessBoard::BeginPlay()
@@ -41,6 +55,7 @@ void AChessBoard::BeginPlay()
 		for (int x = 0; x < 8; x++)
 		{
 			this->SpawnChessPiece(x, y, this->InitBoardLayout);
+			this->SpawnChessTile(x, y);
 		}
 	}
 }

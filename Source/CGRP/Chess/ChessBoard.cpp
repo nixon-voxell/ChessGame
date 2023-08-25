@@ -16,19 +16,15 @@ void AChessBoard::SpawnChessPiece(int32 x, int32 y, FChessBoardLayout* BoardLayo
 		return;
 	}
 
-	FTransform spawnLocation = FTransform::Identity;
-	spawnLocation.SetLocation(FVector(x, y, this->ChessPieceElevation));
-	if (isBlack)
-	{
-		spawnLocation.SetRotation(this->BlackRotation);
-	}
-	else
-	{
-		spawnLocation.SetRotation(this->WhiteRotation);
-	}
+	FTransform spawnTransform = FTransform::Identity;
+	FVector location = FVector(-x * this->TileSize, y * this->TileSize, this->ChessPieceElevation);
+	spawnTransform.SetLocation(location);
+
+	FPieceConfig pieceConfig = isBlack ? this->BlackConfig : this->WhiteConfig;
+	spawnTransform.SetRotation(pieceConfig.Rotation);
 
 	// Spawn chess piece
-	AChessItem* spawnedPiece = this->GetWorld()->SpawnActor<AChessItem>(chessPiece->GetClass(), spawnLocation);
+	AChessItem* spawnedPiece = this->GetWorld()->SpawnActor<AChessItem>(chessPiece->GetClass(), spawnTransform);
 }
 
 void AChessBoard::BeginPlay()

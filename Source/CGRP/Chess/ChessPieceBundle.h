@@ -18,22 +18,22 @@ public:
 	GENERATED_BODY()
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Chess Pieces")
-	AChessItem* Pawn;
+	TSubclassOf<AChessItem> Pawn;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Chess Pieces")
-	AChessItem* Rook;
+	TSubclassOf<AChessItem> Rook;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Chess Pieces")
-	AChessItem* Knight;
+	TSubclassOf<AChessItem> Knight;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Chess Pieces")
-	AChessItem* BishopPiece;
+	TSubclassOf<AChessItem> BishopPiece;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Chess Pieces")
-	AChessItem* QueenPiece;
+	TSubclassOf<AChessItem> QueenPiece;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Chess Pieces")
-	AChessItem* KingPiece;
+	TSubclassOf<AChessItem> KingPiece;
 
 	AChessItem* Pieces[7];
 

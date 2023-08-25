@@ -2,6 +2,7 @@
 
 FChessBoardLayout::FChessBoardLayout()
 {
+	this->Layout.SetNum(64, true);
 }
 
 FChessBoardLayout::~FChessBoardLayout()

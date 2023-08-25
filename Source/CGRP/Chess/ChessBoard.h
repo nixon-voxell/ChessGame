@@ -8,6 +8,7 @@
 #include "ChessItem.h"
 #include "ChessPieceBundle.h"
 #include "ChessBoardLayout.h"
+#include "Piece/PieceConfig.h"
 #include "ChessBoard.generated.h"
 
 UCLASS()
@@ -16,20 +17,23 @@ class CGRP_API AChessBoard : public AActor
 	GENERATED_BODY()
 	
 public:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Chess Board")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FDataTableRowHandle InitBoardLayoutRow;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Chess Board")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FChessPieceBundle ChessPieceBundle;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Chess Board")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	double ChessPieceElevation = 1.0;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Chess Board|White Rotation")
-	FQuat WhiteRotation;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	double TileSize = 100.0;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Chess Board|Black Rotation")
-	FQuat BlackRotation;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	FPieceConfig WhiteConfig;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	FPieceConfig BlackConfig;
 
 protected:
 	FChessBoardLayout* InitBoardLayout;

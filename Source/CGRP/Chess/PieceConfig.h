@@ -8,9 +8,9 @@
 USTRUCT(BlueprintType)
 struct CGRP_API FPieceConfig : public FTableRowBase
 {
-public:
 	GENERATED_BODY()
 
+public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	FQuat Rotation;
 

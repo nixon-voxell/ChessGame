@@ -38,6 +38,12 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	FPieceConfig BlackConfig;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UMaterial* BlackTile;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UMaterial* WhiteTile;
+
 protected:
 	FChessBoardLayout* InitBoardLayout;
 

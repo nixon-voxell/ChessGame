@@ -25,6 +25,13 @@ void AChessBoard::SpawnChessPiece(int32 x, int32 y, FChessBoardLayout* BoardLayo
 
 	// Spawn chess piece
 	AChessItem* spawnedPiece = this->GetWorld()->SpawnActor<AChessItem>(chessPiece->GetClass(), spawnTransform);
+
+	// Assign material
+	TArray<UStaticMeshComponent*> meshComps;
+	spawnedPiece->GetComponents<UStaticMeshComponent*>(meshComps);
+	meshComps[0]->SetMaterial(0, pieceConfig.Material);
+
+	// Assign board index
 	spawnedPiece->BoardIndex = boardIndex;
 }
 
@@ -38,6 +45,20 @@ void AChessBoard::SpawnChessTile(int32 x, int32 y)
 
 	// Spawn chess tile
 	AChessItem* spawnedTile = this->GetWorld()->SpawnActor<AChessItem>(this->ChessTile.GetDefaultObject()->GetClass(), spawnTransform);
+
+	// Assign material
+	TArray<UStaticMeshComponent*> meshComps;
+	spawnedTile->GetComponents<UStaticMeshComponent*>(meshComps);
+	if ((x + boardIndex / 8) % 2 == 0)
+	{
+		meshComps[0]->SetMaterial(0, this->BlackTileMaterial);
+	}
+	else
+	{
+		meshComps[0]->SetMaterial(0, this->WhiteTileMaterial);
+	}
+
+	// Assign board index
 	spawnedTile->BoardIndex = boardIndex;
 }
 

@@ -15,7 +15,7 @@ UCLASS()
 class CGRP_API AChessBoard : public AActor
 {
 	GENERATED_BODY()
-	
+
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TSubclassOf<AChessItem> ChessTile;
@@ -39,10 +39,10 @@ public:
 	FPieceConfig BlackConfig;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	UMaterial* BlackTile;
+	UMaterial* BlackTileMaterial;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	UMaterial* WhiteTile;
+	UMaterial* WhiteTileMaterial;
 
 protected:
 	FChessBoardLayout* InitBoardLayout;

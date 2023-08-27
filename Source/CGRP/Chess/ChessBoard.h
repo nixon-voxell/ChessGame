@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "Kismet/GameplayStatics.h"
 
 #include "ChessItem.h"
 #include "ChessPieceBundle.h"
@@ -17,6 +18,9 @@ class CGRP_API AChessBoard : public AActor
 	GENERATED_BODY()
 
 public:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	USceneComponent* SceneComponent;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TSubclassOf<AChessItem> ChessTile;
 
@@ -45,15 +49,19 @@ public:
 	UMaterial* WhiteTileMaterial;
 
 protected:
+	APlayerController* Controller;
 	FChessBoardLayout* InitBoardLayout;
+	TArray<AChessItem*> ChessPieces;
+	TArray<AChessItem*> ChessTiles;
 
-protected:
-	void SpawnChessPiece(int32 x, int32 y, FChessBoardLayout* BoardLayout);
-	void SpawnChessTile(int32 x, int32 y);
+	AChessItem* SpawnChessPiece(int32 x, int32 y, FChessBoardLayout* BoardLayout);
+	AChessItem* SpawnChessTile(int32 x, int32 y);
 
 	virtual void BeginPlay() override;
 
 public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+
+	AChessBoard();
 };

@@ -2,8 +2,9 @@
 
 
 #include "ChessBoard.h"
+#include "../ChessUtil/MovementUtil.h"
 
-void AChessBoard::SpawnChessPiece(int32 x, int32 y, FChessBoardLayout* BoardLayout)
+AChessItem* AChessBoard::SpawnChessPiece(int32 x, int32 y, FChessBoardLayout* BoardLayout)
 {
 	int32 boardIndex = x + y * 8;
 	int32 pieceIndex = BoardLayout->GetPieceIndex(boardIndex);
@@ -13,7 +14,7 @@ void AChessBoard::SpawnChessPiece(int32 x, int32 y, FChessBoardLayout* BoardLayo
 	// NULL indicates that there shouldn't be any chess pieces there
 	if (chessPiece == NULL)
 	{
-		return;
+		return NULL;
 	}
 
 	FTransform spawnTransform = FTransform::Identity;
@@ -25,6 +26,7 @@ void AChessBoard::SpawnChessPiece(int32 x, int32 y, FChessBoardLayout* BoardLayo
 
 	// Spawn chess piece
 	AChessItem* spawnedPiece = this->GetWorld()->SpawnActor<AChessItem>(chessPiece->GetClass(), spawnTransform);
+	spawnedPiece->AttachToActor(this, FAttachmentTransformRules::KeepWorldTransform);
 
 	// Assign material
 	TArray<UStaticMeshComponent*> meshComps;
@@ -33,9 +35,10 @@ void AChessBoard::SpawnChessPiece(int32 x, int32 y, FChessBoardLayout* BoardLayo
 
 	// Assign board index
 	spawnedPiece->BoardIndex = boardIndex;
+	return spawnedPiece;
 }
 
-void AChessBoard::SpawnChessTile(int32 x, int32 y)
+AChessItem* AChessBoard::SpawnChessTile(int32 x, int32 y)
 {
 	int32 boardIndex = x + y * 8;
 
@@ -44,7 +47,10 @@ void AChessBoard::SpawnChessTile(int32 x, int32 y)
 	spawnTransform.SetLocation(location);
 
 	// Spawn chess tile
-	AChessItem* spawnedTile = this->GetWorld()->SpawnActor<AChessItem>(this->ChessTile.GetDefaultObject()->GetClass(), spawnTransform);
+	AChessItem* spawnedTile = this->GetWorld()->SpawnActor<AChessItem>(
+		this->ChessTile.GetDefaultObject()->GetClass(), spawnTransform
+	);
+	spawnedTile->AttachToActor(this, FAttachmentTransformRules::KeepWorldTransform);
 
 	// Assign material
 	TArray<UStaticMeshComponent*> meshComps;
@@ -60,11 +66,15 @@ void AChessBoard::SpawnChessTile(int32 x, int32 y)
 
 	// Assign board index
 	spawnedTile->BoardIndex = boardIndex;
+	return spawnedTile;
 }
 
 void AChessBoard::BeginPlay()
 {
 	Super::BeginPlay();
+
+	this->Controller = UGameplayStatics::GetPlayerController(this->GetWorld(), 0);
+
 	this->ChessPieceBundle.Initialize();
 	this->InitBoardLayout = this->InitBoardLayoutRow.GetRow<FChessBoardLayout>(
 		this->InitBoardLayoutRow.RowName.ToString()
@@ -75,8 +85,17 @@ void AChessBoard::BeginPlay()
 	{
 		for (int x = 0; x < 8; x++)
 		{
-			this->SpawnChessPiece(x, y, this->InitBoardLayout);
-			this->SpawnChessTile(x, y);
+			AChessItem* chessPiece = this->SpawnChessPiece(x, y, this->InitBoardLayout);
+			if (chessPiece != NULL)
+			{
+				this->ChessPieces.Add(chessPiece);
+			}
+
+			AChessItem* chessTile = this->SpawnChessTile(x, y);
+			if (chessTile != NULL)
+			{
+				this->ChessTiles.Add(chessTile);
+			}
 		}
 	}
 }
@@ -84,4 +103,30 @@ void AChessBoard::BeginPlay()
 void AChessBoard::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	FHitResult hitResult;
+	if (
+		this->Controller->GetHitResultUnderCursor(
+			ECollisionChannel::ECC_Visibility,
+			false,
+			hitResult
+		)
+	) {
+		AActor* hitActor = hitResult.GetActor();
+
+		if (hitActor != NULL)
+		{
+			UE_LOG(LogTemp, Log, TEXT("%s"), *hitActor->GetName());
+		}
+	}
+}
+
+AChessBoard::AChessBoard()
+{
+	this->SceneComponent = CreateDefaultSubobject<USceneComponent>(TEXT("SceneComponent"));
+	SetRootComponent(this->SceneComponent);
+
+	// Set this actor to call Tick() every frame. You can turn this off to improve performance if you don't need it.
+	this->PrimaryActorTick.bCanEverTick = true;
+	this->PrimaryActorTick.bStartWithTickEnabled = true;
 }

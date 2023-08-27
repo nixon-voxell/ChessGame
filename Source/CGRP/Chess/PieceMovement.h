@@ -21,7 +21,10 @@ public:
 	bool FirstStepOnly;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	bool Capture;
+	bool CaptureOnly;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	bool MovementOnly;
 
 	FPieceMovement();
 	~FPieceMovement();

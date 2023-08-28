@@ -1,16 +1,27 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-#include "Engine.h"
+
 #include "FixResolution.h"
+#include "Engine/Engine.h"
 
-void UFixResolution::ApplyFixedResolution()
+
+
+FIntPoint UFixResolution::GetResolutionCustom()
 {
-    // Set the screen resolution scale to 720p
-    SetResolutionScaleNormalized(1280.0f / 720.0f);
+	ResolutionX = 1980;
+	ResolutionY = 1080;
+	FIntPoint Resolution(ResolutionX, ResolutionY);
+	return Resolution;
+}
 
-    // Apply the resolution settings
-    ApplyResolutionSettings(false);
+int32 UFixResolution::GetNumberCustom()
+{
+	ResolutionX = 1980;
+	int32 Number(ResolutionX);
+	return Number;
+}
 
-    // Print a message to the screen to confirm that the function was called
-    GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, TEXT("Fixed resolution applied!"));
+UFixResolution* UFixResolution::GetGameUserSettingsCustom()
+{
+	return Cast<UFixResolution>(UGameUserSettings::GetGameUserSettings());
 }

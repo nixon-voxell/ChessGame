@@ -48,6 +48,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	UMaterial* WhiteTileMaterial;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UMaterial* SelectionMaterial;
+
 protected:
 	APlayerController* Controller;
 	FChessBoardLayout* InitBoardLayout;

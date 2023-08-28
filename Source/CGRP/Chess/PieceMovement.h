@@ -12,19 +12,22 @@ struct CGRP_API FPieceMovement : public FTableRowBase
 
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	bool IsDirection = false;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	int32 XOffset;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	int32 YOffset;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	bool FirstStepOnly;
+	bool FirstStepOnly = false;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	bool CaptureOnly;
+	bool IsCapture = true;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	bool MovementOnly;
+	bool IsMovement = true;
 
 	FPieceMovement();
 	~FPieceMovement();

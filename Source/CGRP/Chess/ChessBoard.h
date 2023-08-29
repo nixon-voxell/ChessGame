@@ -49,7 +49,10 @@ public:
 	UMaterial* WhiteTileMaterial;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	UMaterial* SelectionMaterial;
+	UMaterial* HoverMaterial;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UMaterial* MovementMaterial;
 
 protected:
 	// variables

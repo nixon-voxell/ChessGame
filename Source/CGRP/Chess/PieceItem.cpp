@@ -1,12 +1,21 @@
 #include "PieceItem.h"
 
-// Called when the game starts or when spawned
+void APieceItem::Initialize(int32 Index)
+{
+	this->BoardIndex = Index;
+	this->OriginBoardIndex = Index;
+}
+
+bool APieceItem::IsAtOrigin()
+{
+	return this->BoardIndex == this->OriginBoardIndex;
+}
+
 void APieceItem::BeginPlay()
 {
 	Super::BeginPlay();
 }
 
-// Called every frame
 void APieceItem::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);

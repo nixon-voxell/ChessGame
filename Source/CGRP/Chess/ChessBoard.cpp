@@ -25,14 +25,14 @@ AChessItem* AChessBoard::SpawnChessPiece(int32 x, int32 y, FChessBoardLayout* Bo
 	spawnTransform.SetRotation(pieceConfig.Rotation);
 
 	// Spawn chess piece
-	AChessItem* spawnedPiece = this->GetWorld()->SpawnActor<AChessItem>(chessPiece->GetClass(), spawnTransform);
+	APieceItem* spawnedPiece = this->GetWorld()->SpawnActor<APieceItem>(chessPiece->GetClass(), spawnTransform);
 	spawnedPiece->AttachToActor(this, FAttachmentTransformRules::KeepWorldTransform);
 
 	// Assign material
 	spawnedPiece->SetOriginMaterial(pieceConfig.Material);
 
 	// Assign board index
-	spawnedPiece->BoardIndex = boardIndex;
+	spawnedPiece->Initialize(boardIndex);
 	return spawnedPiece;
 }
 
@@ -68,7 +68,21 @@ AChessItem* AChessBoard::SpawnChessTile(int32 x, int32 y)
 void AChessBoard::MouseLeftClicked()
 {
 	// grab chess piece if available
-	UE_LOG(LogTemp, Log, TEXT("MouseLeftClicked event"));
+	FHitResult hitResult;
+	if (
+		this->Controller->GetHitResultUnderCursor(
+			ECollisionChannel::ECC_Visibility,
+			false,
+			hitResult
+		)
+	) {
+		APieceItem* item = Cast<APieceItem>(hitResult.GetActor());
+
+		if (item != NULL)
+		{
+			UE_LOG(LogTemp, Log, TEXT("Selected Piece: %s"), *item->GetName());
+		}
+	}
 }
 
 void AChessBoard::BeginPlay()
@@ -131,7 +145,7 @@ void AChessBoard::Tick(float DeltaTime)
 
 		if (item != NULL)
 		{
-			item->SetMaterial(this->SelectionMaterial);
+			item->SetMaterial(this->HoverMaterial);
 			this->LastHoverItem = item;
 		}
 	}
@@ -143,7 +157,6 @@ AChessBoard::AChessBoard()
 
 	SetRootComponent(this->SceneComponent);
 
-	// Set this actor to call Tick() every frame. You can turn this off to improve performance if you don't need it.
 	this->PrimaryActorTick.bCanEverTick = true;
 	this->PrimaryActorTick.bStartWithTickEnabled = true;
 }

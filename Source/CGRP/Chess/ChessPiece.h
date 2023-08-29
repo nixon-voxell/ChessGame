@@ -3,7 +3,7 @@
 #include "CoreMinimal.h"
 #include "Engine/DataTable.h"
 
-#include "ChessItem.h"
+#include "PieceItem.h"
 #include "PieceMovement.h"
 #include "ChessPiece.generated.h"
 
@@ -13,10 +13,10 @@ struct CGRP_API FChessPiece : public FTableRowBase
 	GENERATED_BODY()
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TSubclassOf<AChessItem> Item;
+	TSubclassOf<APieceItem> Item;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TArray<FPieceMovement> Movements;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta=(RequiredAssetDataTags = "RowStructure=/Script/CGRP.PieceMovement"))
+	UDataTable* MovementTable;
 
 public:
 	FChessPiece();

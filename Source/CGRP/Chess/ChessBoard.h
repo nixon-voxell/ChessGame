@@ -52,18 +52,23 @@ public:
 	UMaterial* SelectionMaterial;
 
 protected:
+	// variables
 	APlayerController* Controller;
 	FChessBoardLayout* InitBoardLayout;
+
 	TArray<AChessItem*> ChessPieces;
 	TArray<AChessItem*> ChessTiles;
 
+	AChessItem* LastHoverItem;
+
+	// functions
 	AChessItem* SpawnChessPiece(int32 x, int32 y, FChessBoardLayout* BoardLayout);
 	AChessItem* SpawnChessTile(int32 x, int32 y);
 
+	void MouseLeftClicked();
 	virtual void BeginPlay() override;
 
 public:
-	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
 	AChessBoard();

@@ -29,9 +29,7 @@ AChessItem* AChessBoard::SpawnChessPiece(int32 x, int32 y, FChessBoardLayout* Bo
 	spawnedPiece->AttachToActor(this, FAttachmentTransformRules::KeepWorldTransform);
 
 	// Assign material
-	TArray<UStaticMeshComponent*> meshComps;
-	spawnedPiece->GetComponents<UStaticMeshComponent*>(meshComps);
-	meshComps[0]->SetMaterial(0, pieceConfig.Material);
+	spawnedPiece->SetOriginMaterial(pieceConfig.Material);
 
 	// Assign board index
 	spawnedPiece->BoardIndex = boardIndex;
@@ -53,20 +51,24 @@ AChessItem* AChessBoard::SpawnChessTile(int32 x, int32 y)
 	spawnedTile->AttachToActor(this, FAttachmentTransformRules::KeepWorldTransform);
 
 	// Assign material
-	TArray<UStaticMeshComponent*> meshComps;
-	spawnedTile->GetComponents<UStaticMeshComponent*>(meshComps);
 	if ((x + boardIndex / 8) % 2 == 0)
 	{
-		meshComps[0]->SetMaterial(0, this->BlackTileMaterial);
+		spawnedTile->SetOriginMaterial(this->BlackTileMaterial);
 	}
 	else
 	{
-		meshComps[0]->SetMaterial(0, this->WhiteTileMaterial);
+		spawnedTile->SetOriginMaterial(this->WhiteTileMaterial);
 	}
 
 	// Assign board index
 	spawnedTile->BoardIndex = boardIndex;
 	return spawnedTile;
+}
+
+void AChessBoard::MouseLeftClicked()
+{
+	// grab chess piece if available
+	UE_LOG(LogTemp, Log, TEXT("MouseLeftClicked event"));
 }
 
 void AChessBoard::BeginPlay()
@@ -98,11 +100,24 @@ void AChessBoard::BeginPlay()
 			}
 		}
 	}
+
+	if (this->Controller->InputComponent != NULL)
+	{
+		this->Controller->InputComponent->BindAction(
+			"MouseLeftClicked", IE_Pressed, this, &AChessBoard::MouseLeftClicked
+		);
+	}
 }
 
 void AChessBoard::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	// reset material to its origin material if it's not null
+	if (this->LastHoverItem != NULL)
+	{
+		this->LastHoverItem->ResetMaterial();
+	}
 
 	FHitResult hitResult;
 	if (
@@ -112,11 +127,12 @@ void AChessBoard::Tick(float DeltaTime)
 			hitResult
 		)
 	) {
-		AActor* hitActor = hitResult.GetActor();
+		AChessItem* item = Cast<AChessItem>(hitResult.GetActor());
 
-		if (hitActor != NULL)
+		if (item != NULL)
 		{
-			UE_LOG(LogTemp, Log, TEXT("%s"), *hitActor->GetName());
+			item->SetMaterial(this->SelectionMaterial);
+			this->LastHoverItem = item;
 		}
 	}
 }
@@ -124,6 +140,7 @@ void AChessBoard::Tick(float DeltaTime)
 AChessBoard::AChessBoard()
 {
 	this->SceneComponent = CreateDefaultSubobject<USceneComponent>(TEXT("SceneComponent"));
+
 	SetRootComponent(this->SceneComponent);
 
 	// Set this actor to call Tick() every frame. You can turn this off to improve performance if you don't need it.

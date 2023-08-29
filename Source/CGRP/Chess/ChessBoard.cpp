@@ -9,7 +9,7 @@ AChessItem* AChessBoard::SpawnChessPiece(int32 x, int32 y, FChessBoardLayout* Bo
 	int32 boardIndex = x + y * 8;
 	int32 pieceIndex = BoardLayout->GetPieceIndex(boardIndex);
 	bool isBlack = pieceIndex < 0;
-	AChessItem* chessPiece = this->ChessPieceBundle.Pieces[FMath::Abs(pieceIndex)];
+	AChessItem* chessPiece = this->ChessPieceBundle.GetPieceItem(FMath::Abs(pieceIndex));
 
 	// NULL indicates that there shouldn't be any chess pieces there
 	if (chessPiece == NULL)
@@ -67,7 +67,7 @@ AChessItem* AChessBoard::SpawnChessTile(int32 x, int32 y)
 
 void AChessBoard::MouseLeftClicked()
 {
-	// grab chess piece if available
+	// Grab chess piece if available
 	FHitResult hitResult;
 	if (
 		this->Controller->GetHitResultUnderCursor(
@@ -80,7 +80,16 @@ void AChessBoard::MouseLeftClicked()
 
 		if (item != NULL)
 		{
-			UE_LOG(LogTemp, Log, TEXT("Selected Piece: %s"), *item->GetName());
+			// Get chess piece table
+			PieceType type = item->Type;
+			FChessPiece* chessPiece = this->ChessPieceBundle.GetChessPiece((int32)type);
+			UDataTable* table = chessPiece->MovementTable;
+
+			// Get piece movements
+			TArray<FPieceMovement*> movements;
+			table->GetAllRows(item->GetName(), movements);
+
+			UE_LOG(LogTemp, Log, TEXT("Selected Piece: %d"), movements.Num());
 		}
 	}
 }
@@ -127,12 +136,13 @@ void AChessBoard::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	// reset material to its origin material if it's not null
+	// Reset last hover item's material to its origin material
 	if (this->LastHoverItem != NULL)
 	{
 		this->LastHoverItem->ResetMaterial();
 	}
 
+	// Change material on hovered item
 	FHitResult hitResult;
 	if (
 		this->Controller->GetHitResultUnderCursor(

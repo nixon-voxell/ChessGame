@@ -36,9 +36,12 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FChessPiece KingPiece;
 
-	AChessItem* Pieces[7];
+	AChessItem* PieceItems[7];
+	FChessPiece* ChessPieces[7];
 
 	void Initialize();
+	AChessItem* GetPieceItem(int32 Index);
+	FChessPiece* GetChessPiece(int32 Index);
 
 	FChessPieceBundle();
 	~FChessPieceBundle();

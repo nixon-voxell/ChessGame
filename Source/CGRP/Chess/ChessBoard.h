@@ -54,6 +54,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	UMaterial* MovementMaterial;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UMaterial* CaptureMaterial;
+
 protected:
 	// variables
 	APlayerController* Controller;

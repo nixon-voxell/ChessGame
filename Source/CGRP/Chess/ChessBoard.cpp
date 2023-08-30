@@ -100,6 +100,8 @@ void AChessBoard::MouseLeftClicked()
 				);
 
 				offset += pieceItem->BoardIndex;
+				if (offset < 0 || offset > 63) continue;
+
 				UE_LOG(LogTemp, Log, TEXT("possible board index: %d"), offset);
 			}
 

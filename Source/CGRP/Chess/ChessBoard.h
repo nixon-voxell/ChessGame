@@ -63,6 +63,7 @@ protected:
 	TArray<AChessItem*> ChessTiles;
 
 	AChessItem* LastHoverItem;
+	APieceItem* LastSelectedPiece;
 
 	// functions
 	AChessItem* SpawnChessPiece(int32 x, int32 y, FChessBoardLayout* BoardLayout);

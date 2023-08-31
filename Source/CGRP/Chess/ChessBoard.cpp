@@ -32,7 +32,7 @@ AChessItem* AChessBoard::SpawnChessPiece(int32 x, int32 y, FChessBoardLayout* Bo
 	spawnedPiece->SetOriginMaterial(pieceConfig.Material);
 
 	// Assign board index
-	spawnedPiece->Initialize(boardIndex);
+	spawnedPiece->Initialize(boardIndex, isBlack);
 	return spawnedPiece;
 }
 
@@ -76,20 +76,36 @@ void AChessBoard::MouseLeftClicked()
 			hitResult
 		)
 	) {
-		APieceItem* item = Cast<APieceItem>(hitResult.GetActor());
+		APieceItem* pieceItem = Cast<APieceItem>(hitResult.GetActor());
 
-		if (item != NULL)
+		if (pieceItem != NULL)
 		{
 			// Get chess piece table
-			PieceType type = item->Type;
+			PieceType type = pieceItem->Type;
 			FChessPiece* chessPiece = this->ChessPieceBundle.GetChessPiece((int32)type);
 			UDataTable* table = chessPiece->MovementTable;
 
 			// Get piece movements
 			TArray<FPieceMovement*> movements;
-			table->GetAllRows(item->GetName(), movements);
+			table->GetAllRows(pieceItem->GetName(), movements);
 
-			UE_LOG(LogTemp, Log, TEXT("Selected Piece: %d"), movements.Num());
+			UE_LOG(LogTemp, Log, TEXT("row count: %d"), movements.Num());
+			UE_LOG(LogTemp, Log, TEXT("board index: %d"), pieceItem->BoardIndex);
+
+			for (int r = 0; r < movements.Num(); r++)
+			{
+				FPieceMovement* movement = movements[r];
+				int32 offset = MovementUtil::OffsetFromXY(
+					movement->XOffset, movement->YOffset
+				);
+
+				offset += pieceItem->BoardIndex;
+				if (offset < 0 || offset > 63) continue;
+
+				UE_LOG(LogTemp, Log, TEXT("possible board index: %d"), offset);
+			}
+
+			this->LastSelectedPiece = pieceItem;
 		}
 	}
 }

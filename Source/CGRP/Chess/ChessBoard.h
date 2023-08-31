@@ -54,6 +54,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	UMaterial* MovementMaterial;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UMaterial* CaptureMaterial;
+
 protected:
 	// variables
 	APlayerController* Controller;
@@ -63,6 +66,7 @@ protected:
 	TArray<AChessItem*> ChessTiles;
 
 	AChessItem* LastHoverItem;
+	APieceItem* LastSelectedPiece;
 
 	// functions
 	AChessItem* SpawnChessPiece(int32 x, int32 y, FChessBoardLayout* BoardLayout);

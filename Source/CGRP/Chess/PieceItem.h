@@ -16,13 +16,16 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	PieceType Type;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool IsBlack;
+
 protected:
 	int32 OriginBoardIndex;
 
 	virtual void BeginPlay() override;
 
 public:
-	void Initialize(int32 BoardIndex);
+	void Initialize(int32 Index, bool Black);
 	bool IsAtOrigin();
 	virtual void Tick(float DeltaTime) override;
 

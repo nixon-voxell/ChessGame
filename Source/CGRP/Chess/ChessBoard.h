@@ -62,8 +62,8 @@ protected:
 	APlayerController* Controller;
 	FChessBoardLayout* InitBoardLayout;
 
-	TArray<AChessItem*> ChessPieces;
 	TArray<AChessItem*> ChessTiles;
+	TArray<AChessItem*> ChessPieces;
 
 	AChessItem* LastHoverItem;
 	APieceItem* LastSelectedPiece;

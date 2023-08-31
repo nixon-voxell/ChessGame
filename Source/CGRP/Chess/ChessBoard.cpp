@@ -67,13 +67,18 @@ AChessItem* AChessBoard::SpawnChessTile(int32 x, int32 y)
 
 void AChessBoard::MouseLeftClicked()
 {
+	// Reset all tile materials
+	for (int t = 0; t < this->ChessTiles.Num(); t++)
+	{
+		this->ChessTiles[t]->ResetMaterial();
+	}
+
 	// Grab chess piece if available
 	FHitResult hitResult;
 	if (
 		this->Controller->GetHitResultUnderCursor(
 			ECollisionChannel::ECC_Visibility,
-			false,
-			hitResult
+			false, hitResult
 		)
 	) {
 		APieceItem* pieceItem = Cast<APieceItem>(hitResult.GetActor());
@@ -95,14 +100,33 @@ void AChessBoard::MouseLeftClicked()
 			for (int r = 0; r < movements.Num(); r++)
 			{
 				FPieceMovement* movement = movements[r];
-				int32 offset = MovementUtil::OffsetFromXY(
+				int32 offsetIndex = MovementUtil::OffsetFromXY(
 					movement->XOffset, movement->YOffset
 				);
 
-				offset += pieceItem->BoardIndex;
-				if (offset < 0 || offset > 63) continue;
+				offsetIndex += pieceItem->BoardIndex;
 
-				UE_LOG(LogTemp, Log, TEXT("possible board index: %d"), offset);
+				// Ignore if offset index off the board
+				if (offsetIndex < 0 || offsetIndex > 63)
+				{
+					continue;
+				}
+
+				// Ignore if offset index not at supposed y offset
+				if (!MovementUtil::CheckYOffsetValidity(
+					pieceItem->BoardIndex,
+					offsetIndex,
+					movement->YOffset)
+				) {
+					continue;
+				}
+
+				if (movement->IsMovement)
+				{
+					this->ChessTiles[offsetIndex]->SetMaterial(this->MovementMaterial);
+				}
+
+				// UE_LOG(LogTemp, Log, TEXT("possible board index: %d"), offsetIndex);
 			}
 
 			this->LastSelectedPiece = pieceItem;
@@ -158,6 +182,7 @@ void AChessBoard::Tick(float DeltaTime)
 		this->LastHoverItem->ResetMaterial();
 	}
 
+	// TODO: scale item instead of changing material
 	// Change material on hovered item
 	FHitResult hitResult;
 	if (

@@ -100,32 +100,49 @@ void AChessBoard::MouseLeftClicked()
 			for (int r = 0; r < movements.Num(); r++)
 			{
 				FPieceMovement* movement = movements[r];
-				int32 offsetIndex = MovementUtil::OffsetFromXY(
-					movement->XOffset, movement->YOffset
-				);
 
-				offsetIndex += pieceItem->BoardIndex;
+				int32 loopCount = 0;
+				int32 multiplier = pieceItem->IsBlack ? -1 : 1;
 
-				// Ignore if offset index off the board
-				if (offsetIndex < 0 || offsetIndex > 63)
+				// Enter loop and continue if it is a direction, early exit if not
+				// Highest number of loop will be 7 since there is only 8 rows
+				while (loopCount < 8)
 				{
-					continue;
-				}
+					loopCount += 1;
 
-				// Ignore if offset index not at supposed y offset
-				if (!MovementUtil::CheckYOffsetValidity(
-					pieceItem->BoardIndex,
-					offsetIndex,
-					movement->YOffset)
-				) {
-					continue;
-				}
+					int32 xOffset = movement->XOffset * loopCount * multiplier;
+					int32 yOffset = movement->YOffset * loopCount * multiplier;
 
-				if (movement->IsMovement)
-				{
-					this->ChessTiles[offsetIndex]->SetMaterial(this->MovementMaterial);
-				}
+					int32 offsetIndex = MovementUtil::OffsetFromXY(xOffset, yOffset);
 
+					offsetIndex += pieceItem->BoardIndex;
+
+					// Ignore if offset index off the board
+					if (offsetIndex < 0 || offsetIndex > 63)
+					{
+						break;
+					}
+
+					// Ignore if offset index not at supposed y offset
+					if (!MovementUtil::CheckYOffsetValidity(
+						pieceItem->BoardIndex,
+						offsetIndex,
+						yOffset)
+					) {
+						break;
+					}
+
+					if (movement->IsMovement)
+					{
+						this->ChessTiles[offsetIndex]->SetMaterial(this->MovementMaterial);
+					}
+
+					// Break out of loop if it is not a direction
+					if (!movement->IsDirection)
+					{
+						break;
+					}
+				}
 				// UE_LOG(LogTemp, Log, TEXT("possible board index: %d"), offsetIndex);
 			}
 
@@ -188,8 +205,7 @@ void AChessBoard::Tick(float DeltaTime)
 	if (
 		this->Controller->GetHitResultUnderCursor(
 			ECollisionChannel::ECC_Visibility,
-			false,
-			hitResult
+			false, hitResult
 		)
 	) {
 		AChessItem* item = Cast<AChessItem>(hitResult.GetActor());

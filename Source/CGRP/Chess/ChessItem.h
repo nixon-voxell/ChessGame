@@ -16,6 +16,8 @@ public:
 protected:
 	UStaticMeshComponent* MeshComponent;
 	UMaterial* OriginMaterial;
+	FVector OriginScale;
+	FVector TargetScale;
 
 	virtual void BeginPlay() override;
 
@@ -23,6 +25,7 @@ public:
 	void SetOriginMaterial(UMaterial* Material);
 	void SetMaterial(UMaterial* Material);
 	void ResetMaterial();
+	void ScaleByFactor(double Factor);
 	virtual void Tick(float DeltaTime) override;
 
 	AChessItem();

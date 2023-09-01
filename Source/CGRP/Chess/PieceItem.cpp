@@ -24,5 +24,4 @@ void APieceItem::Tick(float DeltaTime)
 
 APieceItem::APieceItem()
 {
-	PrimaryActorTick.bCanEverTick = false;
 }

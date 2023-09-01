@@ -36,6 +36,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	double TileSize = 100.0;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	double HoverScaleFactor = 1.2;
+
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	FPieceConfig WhiteConfig;
 

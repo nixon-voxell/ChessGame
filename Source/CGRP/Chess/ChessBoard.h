@@ -52,9 +52,6 @@ public:
 	UMaterial* WhiteTileMaterial;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	UMaterial* HoverMaterial;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	UMaterial* MovementMaterial;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)

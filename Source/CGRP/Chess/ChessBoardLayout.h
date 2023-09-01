@@ -15,7 +15,10 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Layout")
 	TArray<PieceType> Layout;
 
+	void CopyBoardLayout(FChessBoardLayout* Layout);
+
 	int32 GetPieceIndex(int32 BoardIndex);
+	void MovePiece(int32 OriginIndex, int32 TargetIndex);
 
 	FChessBoardLayout();
 	~FChessBoardLayout();

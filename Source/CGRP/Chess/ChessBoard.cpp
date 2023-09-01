@@ -9,7 +9,7 @@ AChessItem* AChessBoard::SpawnChessPiece(int32 x, int32 y, FChessBoardLayout* Bo
 	int32 boardIndex = x + y * 8;
 	int32 pieceIndex = BoardLayout->GetPieceIndex(boardIndex);
 	bool isBlack = pieceIndex < 0;
-	AChessItem* chessPiece = this->ChessPieceBundle.Pieces[FMath::Abs(pieceIndex)];
+	AChessItem* chessPiece = this->ChessPieceBundle.GetPieceItem(FMath::Abs(pieceIndex));
 
 	// NULL indicates that there shouldn't be any chess pieces there
 	if (chessPiece == NULL)
@@ -25,16 +25,14 @@ AChessItem* AChessBoard::SpawnChessPiece(int32 x, int32 y, FChessBoardLayout* Bo
 	spawnTransform.SetRotation(pieceConfig.Rotation);
 
 	// Spawn chess piece
-	AChessItem* spawnedPiece = this->GetWorld()->SpawnActor<AChessItem>(chessPiece->GetClass(), spawnTransform);
+	APieceItem* spawnedPiece = this->GetWorld()->SpawnActor<APieceItem>(chessPiece->GetClass(), spawnTransform);
 	spawnedPiece->AttachToActor(this, FAttachmentTransformRules::KeepWorldTransform);
 
 	// Assign material
-	TArray<UStaticMeshComponent*> meshComps;
-	spawnedPiece->GetComponents<UStaticMeshComponent*>(meshComps);
-	meshComps[0]->SetMaterial(0, pieceConfig.Material);
+	spawnedPiece->SetOriginMaterial(pieceConfig.Material);
 
 	// Assign board index
-	spawnedPiece->BoardIndex = boardIndex;
+	spawnedPiece->Initialize(boardIndex, isBlack);
 	return spawnedPiece;
 }
 
@@ -53,20 +51,120 @@ AChessItem* AChessBoard::SpawnChessTile(int32 x, int32 y)
 	spawnedTile->AttachToActor(this, FAttachmentTransformRules::KeepWorldTransform);
 
 	// Assign material
-	TArray<UStaticMeshComponent*> meshComps;
-	spawnedTile->GetComponents<UStaticMeshComponent*>(meshComps);
 	if ((x + boardIndex / 8) % 2 == 0)
 	{
-		meshComps[0]->SetMaterial(0, this->BlackTileMaterial);
+		spawnedTile->SetOriginMaterial(this->BlackTileMaterial);
 	}
 	else
 	{
-		meshComps[0]->SetMaterial(0, this->WhiteTileMaterial);
+		spawnedTile->SetOriginMaterial(this->WhiteTileMaterial);
 	}
 
 	// Assign board index
 	spawnedTile->BoardIndex = boardIndex;
 	return spawnedTile;
+}
+
+void AChessBoard::MouseLeftClicked()
+{
+	// Reset all tile materials
+	for (int t = 0; t < this->ChessTiles.Num(); t++)
+	{
+		this->ChessTiles[t]->ResetMaterial();
+	}
+
+	// Grab chess piece if available
+	FHitResult hitResult;
+	if (
+		this->Controller->GetHitResultUnderCursor(
+			ECollisionChannel::ECC_Visibility,
+			false, hitResult
+		)
+	) {
+		APieceItem* pieceItem = Cast<APieceItem>(hitResult.GetActor());
+
+		if (pieceItem != NULL)
+		{
+			// Get chess piece table
+			PieceType type = pieceItem->Type;
+			FChessPiece* chessPiece = this->ChessPieceBundle.GetChessPiece((int32)type);
+			UDataTable* table = chessPiece->MovementTable;
+
+			// Get piece movements
+			TArray<FPieceMovement*> movements;
+			table->GetAllRows(pieceItem->GetName(), movements);
+
+			UE_LOG(LogTemp, Log, TEXT("row count: %d"), movements.Num());
+			UE_LOG(LogTemp, Log, TEXT("board index: %d"), pieceItem->BoardIndex);
+
+			for (int r = 0; r < movements.Num(); r++)
+			{
+				FPieceMovement* movement = movements[r];
+
+				int32 loopCount = 0;
+				int32 multiplier = pieceItem->IsBlack ? -1 : 1;
+
+				// Enter loop and continue if it is a direction, early exit if not
+				// Highest number of loop will be 7 since there is only 8 rows
+				while (loopCount < 8)
+				{
+					loopCount += 1;
+
+					int32 xOffset = movement->XOffset * loopCount * multiplier;
+					int32 yOffset = movement->YOffset * loopCount * multiplier;
+
+					int32 offsetIndex = MovementUtil::OffsetFromXY(xOffset, yOffset);
+
+					offsetIndex += pieceItem->BoardIndex;
+
+					// Ignore if offset index off the board
+					if (offsetIndex < 0 || offsetIndex > 63)
+					{
+						break;
+					}
+
+					// Ignore if offset index not at supposed y offset
+					if (!MovementUtil::CheckYOffsetValidity(
+						pieceItem->BoardIndex,
+						offsetIndex,
+						yOffset)
+					) {
+						break;
+					}
+
+					// Check if anything is blocking
+					int32 offsetPieceType = this->CurrBoardLayout.GetPieceIndex(offsetIndex);
+					if (offsetPieceType != (int32)PieceType::None)
+					{
+						bool isEnemy = pieceItem->IsBlack && offsetPieceType > 0 ||
+							!pieceItem->IsBlack && offsetPieceType < 0;
+
+						if (isEnemy && movement->IsCapture)
+						{
+							this->ChessTiles[offsetIndex]->SetMaterial(this->CaptureMaterial);
+						}
+
+						// Break anyways since something is blocking us
+						break;
+					}
+
+					if (movement->IsMovement)
+					{
+						this->ChessTiles[offsetIndex]->SetMaterial(this->MovementMaterial);
+					}
+
+					// Break out of loop if it is not a direction
+					if (!movement->IsDirection)
+					{
+						break;
+					}
+				}
+				// UE_LOG(LogTemp, Log, TEXT("possible board index: %d"), offsetIndex);
+			}
+
+			this->LastSelectedPiece = pieceItem;
+		}
+	}
 }
 
 void AChessBoard::BeginPlay()
@@ -79,6 +177,7 @@ void AChessBoard::BeginPlay()
 	this->InitBoardLayout = this->InitBoardLayoutRow.GetRow<FChessBoardLayout>(
 		this->InitBoardLayoutRow.RowName.ToString()
 	);
+	this->CurrBoardLayout.CopyBoardLayout(this->InitBoardLayout);
 
 	// Generate chess tiles and chess pieces
 	for (int y = 0; y < 8; y++)
@@ -98,25 +197,41 @@ void AChessBoard::BeginPlay()
 			}
 		}
 	}
+
+	if (this->Controller->InputComponent != NULL)
+	{
+		this->Controller->InputComponent->BindAction(
+			"MouseLeftClicked", IE_Pressed, this, &AChessBoard::MouseLeftClicked
+		);
+	}
 }
 
 void AChessBoard::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	// Reset last hover item's material to its origin material
+	if (this->LastHoverItem != NULL)
+	{
+		this->LastHoverItem->ResetMaterial();
+	}
+
+	// TODO: scale item instead of changing material
+	// Change material on hovered item
 	FHitResult hitResult;
 	if (
 		this->Controller->GetHitResultUnderCursor(
 			ECollisionChannel::ECC_Visibility,
-			false,
-			hitResult
+			false, hitResult
 		)
 	) {
-		AActor* hitActor = hitResult.GetActor();
+		AChessItem* item = Cast<AChessItem>(hitResult.GetActor());
 
-		if (hitActor != NULL)
+		if (item != NULL)
 		{
-			UE_LOG(LogTemp, Log, TEXT("%s"), *hitActor->GetName());
+			// item->SetMaterial(this->HoverMaterial);
+			item->ScaleByFactor(this->HoverScaleFactor);
+			// this->LastHoverItem = item;
 		}
 	}
 }
@@ -124,9 +239,9 @@ void AChessBoard::Tick(float DeltaTime)
 AChessBoard::AChessBoard()
 {
 	this->SceneComponent = CreateDefaultSubobject<USceneComponent>(TEXT("SceneComponent"));
+
 	SetRootComponent(this->SceneComponent);
 
-	// Set this actor to call Tick() every frame. You can turn this off to improve performance if you don't need it.
 	this->PrimaryActorTick.bCanEverTick = true;
 	this->PrimaryActorTick.bStartWithTickEnabled = true;
 }

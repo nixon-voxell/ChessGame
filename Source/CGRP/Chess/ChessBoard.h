@@ -36,6 +36,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	double TileSize = 100.0;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	double HoverScaleFactor = 1.2;
+
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	FPieceConfig WhiteConfig;
 
@@ -49,21 +52,31 @@ public:
 	UMaterial* WhiteTileMaterial;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	UMaterial* SelectionMaterial;
+	UMaterial* MovementMaterial;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UMaterial* CaptureMaterial;
 
 protected:
+	// variables
 	APlayerController* Controller;
 	FChessBoardLayout* InitBoardLayout;
-	TArray<AChessItem*> ChessPieces;
-	TArray<AChessItem*> ChessTiles;
+	FChessBoardLayout CurrBoardLayout;
 
+	TArray<AChessItem*> ChessTiles;
+	TArray<AChessItem*> ChessPieces;
+
+	AChessItem* LastHoverItem;
+	APieceItem* LastSelectedPiece;
+
+	// functions
 	AChessItem* SpawnChessPiece(int32 x, int32 y, FChessBoardLayout* BoardLayout);
 	AChessItem* SpawnChessTile(int32 x, int32 y);
 
+	void MouseLeftClicked();
 	virtual void BeginPlay() override;
 
 public:
-	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
 	AChessBoard();

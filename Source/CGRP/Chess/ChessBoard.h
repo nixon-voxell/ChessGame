@@ -61,6 +61,7 @@ protected:
 	// variables
 	APlayerController* Controller;
 	FChessBoardLayout* InitBoardLayout;
+	FChessBoardLayout CurrBoardLayout;
 
 	TArray<AChessItem*> ChessTiles;
 	TArray<AChessItem*> ChessPieces;

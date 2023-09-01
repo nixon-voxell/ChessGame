@@ -132,6 +132,22 @@ void AChessBoard::MouseLeftClicked()
 						break;
 					}
 
+					// Check if anything is blocking
+					int32 offsetPieceType = this->CurrBoardLayout.GetPieceIndex(offsetIndex);
+					if (offsetPieceType != (int32)PieceType::None)
+					{
+						bool isEnemy = pieceItem->IsBlack && offsetPieceType > 0 ||
+							!pieceItem->IsBlack && offsetPieceType < 0;
+
+						if (isEnemy && movement->IsCapture)
+						{
+							this->ChessTiles[offsetIndex]->SetMaterial(this->CaptureMaterial);
+						}
+
+						// Break anyways since something is blocking us
+						break;
+					}
+
 					if (movement->IsMovement)
 					{
 						this->ChessTiles[offsetIndex]->SetMaterial(this->MovementMaterial);
@@ -161,6 +177,7 @@ void AChessBoard::BeginPlay()
 	this->InitBoardLayout = this->InitBoardLayoutRow.GetRow<FChessBoardLayout>(
 		this->InitBoardLayoutRow.RowName.ToString()
 	);
+	this->CurrBoardLayout.CopyBoardLayout(this->InitBoardLayout);
 
 	// Generate chess tiles and chess pieces
 	for (int y = 0; y < 8; y++)

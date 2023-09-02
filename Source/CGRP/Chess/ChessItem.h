@@ -4,23 +4,30 @@
 #include "GameFramework/Actor.h"
 #include "ChessItem.generated.h"
 
-UCLASS()
+UCLASS(Blueprintable)
 class CGRP_API AChessItem : public AActor
 {
 	GENERATED_BODY()
 	
 public:
-	// Sets default values for this actor's properties
-	AChessItem();
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Chess")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	int32 BoardIndex;
 
 protected:
-	// Called when the game starts or when spawned
+	UStaticMeshComponent* MeshComponent;
+	UMaterial* OriginMaterial;
+	FVector OriginScale;
+	FVector TargetScale;
+	double ScaleSpeed = 1.0;
+
 	virtual void BeginPlay() override;
 
 public:
-	// Called every frame
+	void SetOriginMaterial(UMaterial* Material);
+	void SetMaterial(UMaterial* Material);
+	void ResetMaterial();
+	void ScaleByFactor(double Factor, double Speed);
 	virtual void Tick(float DeltaTime) override;
+
+	AChessItem();
 };

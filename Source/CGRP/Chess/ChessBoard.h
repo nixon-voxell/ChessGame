@@ -4,32 +4,89 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "Kismet/GameplayStatics.h"
 
-#include "ChessPieceBundle.h"
 #include "ChessItem.h"
+#include "ChessPieceBundle.h"
+#include "ChessBoardLayout.h"
+#include "PieceConfig.h"
+#include "PieceType.h"
+#include "HoverType.h"
 #include "ChessBoard.generated.h"
 
 UCLASS()
 class CGRP_API AChessBoard : public AActor
 {
 	GENERATED_BODY()
-	
+
 public:
-	// Sets default values for this actor's properties
-	AChessBoard();
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	USceneComponent* SceneComponent;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Chess")
-	AChessItem* ChessTile;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TSubclassOf<AChessItem> ChessTile;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Chess")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FDataTableRowHandle InitBoardLayoutRow;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FChessPieceBundle ChessPieceBundle;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	double ChessPieceElevation = 50.0;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	double TileSize = 100.0;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	double HoverScaleFactor = 1.2;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	double HoverScaleSpeed = 10.0;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	FPieceConfig WhiteConfig;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	FPieceConfig BlackConfig;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UMaterial* BlackTileMaterial;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UMaterial* WhiteTileMaterial;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UMaterial* MovementMaterial;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UMaterial* CaptureMaterial;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	HoverType CurrHoverType;
+
 protected:
-	// Called when the game starts or when spawned
+	// variables
+	APlayerController* Controller;
+	FChessBoardLayout* InitBoardLayout;
+	FChessBoardLayout CurrBoardLayout;
+
+	TArray<AChessItem*> ChessTiles;
+	TArray<AChessItem*> ChessPieces;
+
+	APieceItem* LastSelectedPiece;
+
+	// functions
+	AChessItem* SpawnChessPiece(int32 x, int32 y, FChessBoardLayout* BoardLayout);
+	AChessItem* SpawnChessTile(int32 x, int32 y);
+
+	void HoverUpdate();
+	void MouseLeftClicked();
+	void ShowPieceNextMovement(APieceItem* PieceItem);
 	virtual void BeginPlay() override;
 
 public:
-	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+	AChessBoard();
 };

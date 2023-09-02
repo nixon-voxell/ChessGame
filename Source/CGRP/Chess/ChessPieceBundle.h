@@ -6,6 +6,7 @@
 #include "Engine/DataTable.h"
 
 #include "ChessItem.h"
+#include "ChessPiece.h"
 #include "ChessPieceBundle.generated.h"
 
 /**
@@ -17,27 +18,30 @@ struct CGRP_API FChessPieceBundle : public FTableRowBase
 public:
 	GENERATED_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Chess Pieces")
-	AChessItem* Pawn;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FChessPiece Pawn;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Chess Pieces")
-	AChessItem* Rook;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FChessPiece Rook;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Chess Pieces")
-	AChessItem* Knight;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FChessPiece Knight;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Chess Pieces")
-	AChessItem* BishopPiece;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FChessPiece BishopPiece;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Chess Pieces")
-	AChessItem* QueenPiece;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FChessPiece QueenPiece;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Chess Pieces")
-	AChessItem* KingPiece;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FChessPiece KingPiece;
 
-	AChessItem* Pieces[7];
+	AChessItem* PieceItems[7];
+	FChessPiece* ChessPieces[7];
 
 	void Initialize();
+	AChessItem* GetPieceItem(int32 Index);
+	FChessPiece* GetChessPiece(int32 Index);
 
 	FChessPieceBundle();
 	~FChessPieceBundle();

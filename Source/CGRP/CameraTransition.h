@@ -21,33 +21,37 @@ public:
 	// Sets default values for this actor's properties
 	ACameraTransition();
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	double MovementSpeed = 1.0;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	double RotationSpeed = 1.5;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	AActor* Camera;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Config|White")
+	FVector WhiteLocation;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Config|White")
+	FRotator WhiteRotation;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Config|Black")
+	FVector BlackLocation;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Config|Black")
+	FRotator BlackRotation;
 
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-
-
 public:
 	virtual void Tick(float DeltaTime) override;
-	/**
-	 * Move the camera using CameraMovement1 logic.
-	 * @param DeltaTime The time elapsed since the last frame.
-	 */
 	UFUNCTION(BlueprintCallable, Category = "My Widget")
-	void CameraMovement1(float DeltaTime);
-
-	/**
-	 * Move the camera using CameraMovement2 logic.
-	 * @param DeltaTime The time elapsed since the last frame.
-	 */
-	UFUNCTION(BlueprintCallable, Category = "My Widget")
-	void CameraMovement2(float DeltaTime);
+	void CameraMovement(float DeltaTime, FVector TargetLocation, FRotator TargetRotation);
 
 public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Spline", meta = (AllowPrivateAccess = "True"))
 	UCameraComponent* CameraComponent;
-
-
-
 };

@@ -121,7 +121,17 @@ void AChessBoard::MouseLeftClicked()
 		this->ChessTiles[t]->ResetMaterial();
 	}
 
-	// Grab chess piece if available
+	// Reset all piece materials
+	for (int p = 0; p < this->ChessPieces.Num(); p++)
+	{
+		this->ChessPieces[p]->ResetMaterial();
+	}
+
+	if (this->CurrHoverType == HoverType::None)
+	{
+		return;
+	}
+
 	FHitResult hitResult;
 	if (
 		this->Controller->GetHitResultUnderCursor(
@@ -129,11 +139,37 @@ void AChessBoard::MouseLeftClicked()
 			false, hitResult
 		)
 	) {
-		APieceItem* pieceItem = Cast<APieceItem>(hitResult.GetActor());
+		AChessItem* item = Cast<AChessItem>(hitResult.GetActor());
+		APieceItem* pieceItem = Cast<APieceItem>(item);
 
-		if (pieceItem != NULL)
+		// Ignore if nothing is being selected
+		if (item == NULL)
 		{
-			this->ShowPieceNextMovement(pieceItem);
+			return;
+		}
+
+		if (this->CurrHoverType == HoverType::Tile)
+		{
+			// Must not be a piece item
+			if (pieceItem == NULL)
+			{
+				// TODO: Check eligibility of selected tile
+			}
+		}
+		else if (pieceItem != NULL) // Must be a piece item
+		{
+			// Only white piece
+			if (this->CurrHoverType == HoverType::WhitePiece && !pieceItem->IsBlack)
+			{
+				pieceItem->SetMaterial(this->SelectionMaterial);
+				this->ShowPieceNextMovement(pieceItem);
+			}
+			// Only black piece
+			else if (this->CurrHoverType == HoverType::BlackPiece && pieceItem->IsBlack)
+			{
+				pieceItem->SetMaterial(this->SelectionMaterial);
+				this->ShowPieceNextMovement(pieceItem);
+			}
 		}
 	}
 }
@@ -214,6 +250,16 @@ void AChessBoard::ShowPieceNextMovement(APieceItem* PieceItem)
 	}
 
 	this->LastSelectedPiece = PieceItem;
+}
+
+void AChessBoard::StartWhiteTurn()
+{
+	this->CurrHoverType = HoverType::WhitePiece;
+}
+
+void AChessBoard::StartBlackTurn()
+{
+	this->CurrHoverType = HoverType::BlackPiece;
 }
 
 void AChessBoard::BeginPlay()

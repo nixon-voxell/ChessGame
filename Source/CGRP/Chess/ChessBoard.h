@@ -60,6 +60,9 @@ public:
 	UMaterial* MovementMaterial;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UMaterial* SelectionMaterial;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	UMaterial* CaptureMaterial;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
@@ -83,6 +86,13 @@ protected:
 	void HoverUpdate();
 	void MouseLeftClicked();
 	void ShowPieceNextMovement(APieceItem* PieceItem);
+
+	UFUNCTION(BlueprintCallable, Category = "CPP_ChessBoard")
+	void StartWhiteTurn();
+
+	UFUNCTION(BlueprintCallable, Category = "CPP_ChessBoard")
+	void StartBlackTurn();
+
 	virtual void BeginPlay() override;
 
 public:

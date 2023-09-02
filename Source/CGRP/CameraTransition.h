@@ -48,6 +48,7 @@ protected:
 
 public:
 	virtual void Tick(float DeltaTime) override;
+
 	UFUNCTION(BlueprintCallable, Category = "My Widget")
 	void CameraMovement(float DeltaTime, FVector TargetLocation, FRotator TargetRotation);
 

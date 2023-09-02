@@ -65,6 +65,54 @@ AChessItem* AChessBoard::SpawnChessTile(int32 x, int32 y)
 	return spawnedTile;
 }
 
+void AChessBoard::HoverUpdate()
+{
+	if (this->CurrHoverType == HoverType::None)
+	{
+		return;
+	}
+
+	// Scale hovered item
+	FHitResult hitResult;
+	if (
+		this->Controller->GetHitResultUnderCursor(
+			ECollisionChannel::ECC_Visibility,
+			false, hitResult
+		)
+	) {
+		AChessItem* item = Cast<AChessItem>(hitResult.GetActor());
+		APieceItem* pieceItem = Cast<APieceItem>(item);
+
+		// Ignore if nothing is being hovered
+		if (item == NULL)
+		{
+			return;
+		}
+
+		if (this->CurrHoverType == HoverType::Tile)
+		{
+			// Must not be a piece item
+			if (pieceItem == NULL)
+			{
+				item->ScaleByFactor(this->HoverScaleFactor, this->HoverScaleSpeed);
+			}
+		}
+		else if (pieceItem != NULL) // Must be a piece item
+		{
+			// Only white piece
+			if (this->CurrHoverType == HoverType::WhitePiece && !pieceItem->IsBlack)
+			{
+				item->ScaleByFactor(this->HoverScaleFactor, this->HoverScaleSpeed);
+			}
+			// Only black piece
+			else if (this->CurrHoverType == HoverType::BlackPiece && pieceItem->IsBlack)
+			{
+				item->ScaleByFactor(this->HoverScaleFactor, this->HoverScaleSpeed);
+			}
+		}
+	}
+}
+
 void AChessBoard::MouseLeftClicked()
 {
 	// Reset all tile materials
@@ -210,30 +258,7 @@ void AChessBoard::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	// Reset last hover item's material to its origin material
-	if (this->LastHoverItem != NULL)
-	{
-		this->LastHoverItem->ResetMaterial();
-	}
-
-	// TODO: scale item instead of changing material
-	// Change material on hovered item
-	FHitResult hitResult;
-	if (
-		this->Controller->GetHitResultUnderCursor(
-			ECollisionChannel::ECC_Visibility,
-			false, hitResult
-		)
-	) {
-		AChessItem* item = Cast<AChessItem>(hitResult.GetActor());
-
-		if (item != NULL)
-		{
-			// item->SetMaterial(this->HoverMaterial);
-			item->ScaleByFactor(this->HoverScaleFactor, this->HoverScaleSpeed);
-			// this->LastHoverItem = item;
-		}
-	}
+	this->HoverUpdate();
 }
 
 AChessBoard::AChessBoard()
@@ -244,4 +269,6 @@ AChessBoard::AChessBoard()
 
 	this->PrimaryActorTick.bCanEverTick = true;
 	this->PrimaryActorTick.bStartWithTickEnabled = true;
+
+	this->CurrHoverType = HoverType::None;
 }

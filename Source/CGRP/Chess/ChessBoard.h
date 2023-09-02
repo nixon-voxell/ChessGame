@@ -10,6 +10,8 @@
 #include "ChessPieceBundle.h"
 #include "ChessBoardLayout.h"
 #include "PieceConfig.h"
+#include "PieceType.h"
+#include "HoverType.h"
 #include "ChessBoard.generated.h"
 
 UCLASS()
@@ -60,6 +62,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	UMaterial* CaptureMaterial;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	HoverType CurrHoverType;
+
 protected:
 	// variables
 	APlayerController* Controller;
@@ -69,13 +74,15 @@ protected:
 	TArray<AChessItem*> ChessTiles;
 	TArray<AChessItem*> ChessPieces;
 
-	AChessItem* LastHoverItem;
 	APieceItem* LastSelectedPiece;
+
+	// HoverType CurrHoverType;
 
 	// functions
 	AChessItem* SpawnChessPiece(int32 x, int32 y, FChessBoardLayout* BoardLayout);
 	AChessItem* SpawnChessTile(int32 x, int32 y);
 
+	void HoverUpdate();
 	void MouseLeftClicked();
 	virtual void BeginPlay() override;
 

@@ -4,11 +4,11 @@
 #include "GameFramework/Actor.h"
 #include "Kismet/GameplayStatics.h"
 #include "Camera/PlayerCameraManager.h"
-#include "Blueprint/UserWidget.h"
+#include <iostream>
+
 #include "Camera/CameraComponent.h"
-#include "Components/SplineComponent.h"
-#include "Components/TimelineComponent.h"
-#include "Components/Button.h"
+#include <Components/Button.h>
+
 #include "CameraTransition.generated.h"
 
 
@@ -30,27 +30,24 @@ protected:
 
 public:
 	virtual void Tick(float DeltaTime) override;
+	/**
+	 * Move the camera using CameraMovement1 logic.
+	 * @param DeltaTime The time elapsed since the last frame.
+	 */
+	UFUNCTION(BlueprintCallable, Category = "My Widget")
+	void CameraMovement1(float DeltaTime);
 
+	/**
+	 * Move the camera using CameraMovement2 logic.
+	 * @param DeltaTime The time elapsed since the last frame.
+	 */
+	UFUNCTION(BlueprintCallable, Category = "My Widget")
+	void CameraMovement2(float DeltaTime);
 
 public:
-	void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent);
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Spline", meta = (AllowPrivateAccess = "True"))
-	USplineComponent* SplineComponent;
-
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Spline", meta = (AllowPrivateAccess = "True"))
 	UCameraComponent* CameraComponent;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Spline")
-	UCurveFloat* MovementCurve;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Spline")
-	bool bAutoActive;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Spline", meta = (EditCondition = "!bReverseOnEndTimeline"))
-	bool bReverseOnEndTimeline;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Spline", meta = (EditCondition = "!bRestartOnTimeline"))
-	bool bRestartOnTimeline;
 
 };

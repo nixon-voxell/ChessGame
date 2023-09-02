@@ -1,5 +1,7 @@
 #pragma once
 
+#include "HoverType.generated.h"
+
 UENUM()
 enum struct HoverType : int32
 {

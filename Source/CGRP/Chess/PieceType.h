@@ -1,5 +1,7 @@
 #pragma once
 
+#include "PieceType.generated.h"
+
 UENUM()
 enum struct PieceType : int32
 {

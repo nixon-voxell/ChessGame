@@ -8,7 +8,7 @@
 
 FIntPoint UFixResolution::GetResolutionCustom()
 {
-	ResolutionX = 1980;
+	ResolutionX = 1920;
 	ResolutionY = 1080;
 	FIntPoint Resolution(ResolutionX, ResolutionY);
 	return Resolution;
@@ -16,7 +16,7 @@ FIntPoint UFixResolution::GetResolutionCustom()
 
 int32 UFixResolution::GetNumberCustom()
 {
-	ResolutionX = 1980;
+	ResolutionX = 1920;
 	int32 Number(ResolutionX);
 	return Number;
 }

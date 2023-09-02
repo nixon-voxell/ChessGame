@@ -76,14 +76,13 @@ protected:
 
 	APieceItem* LastSelectedPiece;
 
-	// HoverType CurrHoverType;
-
 	// functions
 	AChessItem* SpawnChessPiece(int32 x, int32 y, FChessBoardLayout* BoardLayout);
 	AChessItem* SpawnChessTile(int32 x, int32 y);
 
 	void HoverUpdate();
 	void MouseLeftClicked();
+	void ShowPieceNextMovement(APieceItem* PieceItem);
 	virtual void BeginPlay() override;
 
 public:

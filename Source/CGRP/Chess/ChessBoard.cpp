@@ -133,86 +133,87 @@ void AChessBoard::MouseLeftClicked()
 
 		if (pieceItem != NULL)
 		{
-			// Get chess piece table
-			PieceType type = pieceItem->Type;
-			FChessPiece* chessPiece = this->ChessPieceBundle.GetChessPiece((int32)type);
-			UDataTable* table = chessPiece->MovementTable;
-
-			// Get piece movements
-			TArray<FPieceMovement*> movements;
-			table->GetAllRows(pieceItem->GetName(), movements);
-
-			UE_LOG(LogTemp, Log, TEXT("row count: %d"), movements.Num());
-			UE_LOG(LogTemp, Log, TEXT("board index: %d"), pieceItem->BoardIndex);
-
-			for (int r = 0; r < movements.Num(); r++)
-			{
-				FPieceMovement* movement = movements[r];
-
-				int32 loopCount = 0;
-				int32 multiplier = pieceItem->IsBlack ? -1 : 1;
-
-				// Enter loop and continue if it is a direction, early exit if not
-				// Highest number of loop will be 7 since there is only 8 rows
-				while (loopCount < 8)
-				{
-					loopCount += 1;
-
-					int32 xOffset = movement->XOffset * loopCount * multiplier;
-					int32 yOffset = movement->YOffset * loopCount * multiplier;
-
-					int32 offsetIndex = MovementUtil::OffsetFromXY(xOffset, yOffset);
-
-					offsetIndex += pieceItem->BoardIndex;
-
-					// Ignore if offset index off the board
-					if (offsetIndex < 0 || offsetIndex > 63)
-					{
-						break;
-					}
-
-					// Ignore if offset index not at supposed y offset
-					if (!MovementUtil::CheckYOffsetValidity(
-						pieceItem->BoardIndex,
-						offsetIndex,
-						yOffset)
-					) {
-						break;
-					}
-
-					// Check if anything is blocking
-					int32 offsetPieceType = this->CurrBoardLayout.GetPieceIndex(offsetIndex);
-					if (offsetPieceType != (int32)PieceType::None)
-					{
-						bool isEnemy = pieceItem->IsBlack && offsetPieceType > 0 ||
-							!pieceItem->IsBlack && offsetPieceType < 0;
-
-						if (isEnemy && movement->IsCapture)
-						{
-							this->ChessTiles[offsetIndex]->SetMaterial(this->CaptureMaterial);
-						}
-
-						// Break anyways since something is blocking us
-						break;
-					}
-
-					if (movement->IsMovement)
-					{
-						this->ChessTiles[offsetIndex]->SetMaterial(this->MovementMaterial);
-					}
-
-					// Break out of loop if it is not a direction
-					if (!movement->IsDirection)
-					{
-						break;
-					}
-				}
-				// UE_LOG(LogTemp, Log, TEXT("possible board index: %d"), offsetIndex);
-			}
-
-			this->LastSelectedPiece = pieceItem;
+			this->ShowPieceNextMovement(pieceItem);
 		}
 	}
+}
+
+void AChessBoard::ShowPieceNextMovement(APieceItem* PieceItem)
+{
+	// Get chess piece table
+	PieceType type = PieceItem->Type;
+	FChessPiece* chessPiece = this->ChessPieceBundle.GetChessPiece((int32)type);
+	UDataTable* table = chessPiece->MovementTable;
+
+	// Get piece movements
+	TArray<FPieceMovement*> movements;
+	table->GetAllRows(PieceItem->GetName(), movements);
+
+	for (int r = 0; r < movements.Num(); r++)
+	{
+		FPieceMovement* movement = movements[r];
+
+		int32 loopCount = 0;
+		int32 multiplier = PieceItem->IsBlack ? -1 : 1;
+
+		// Enter loop and continue if it is a direction, early exit if not
+		// Highest number of loop will be 7 since there is only 8 rows
+		while (loopCount < 8)
+		{
+			loopCount += 1;
+
+			int32 xOffset = movement->XOffset * loopCount * multiplier;
+			int32 yOffset = movement->YOffset * loopCount * multiplier;
+
+			int32 offsetIndex = MovementUtil::OffsetFromXY(xOffset, yOffset);
+
+			offsetIndex += PieceItem->BoardIndex;
+
+			// Ignore if offset index off the board
+			if (offsetIndex < 0 || offsetIndex > 63)
+			{
+				break;
+			}
+
+			// Ignore if offset index not at supposed y offset
+			if (!MovementUtil::CheckYOffsetValidity(
+				PieceItem->BoardIndex,
+				offsetIndex,
+				yOffset)
+			) {
+				break;
+			}
+
+			// Check if anything is blocking
+			int32 offsetPieceType = this->CurrBoardLayout.GetPieceIndex(offsetIndex);
+			if (offsetPieceType != (int32)PieceType::None)
+			{
+				bool isEnemy = PieceItem->IsBlack && offsetPieceType > 0 ||
+					!PieceItem->IsBlack && offsetPieceType < 0;
+
+				if (isEnemy && movement->IsCapture)
+				{
+					this->ChessTiles[offsetIndex]->SetMaterial(this->CaptureMaterial);
+				}
+
+				// Break anyways since something is blocking us
+				break;
+			}
+
+			if (movement->IsMovement)
+			{
+				this->ChessTiles[offsetIndex]->SetMaterial(this->MovementMaterial);
+			}
+
+			// Break out of loop if it is not a direction
+			if (!movement->IsDirection)
+			{
+				break;
+			}
+		}
+	}
+
+	this->LastSelectedPiece = PieceItem;
 }
 
 void AChessBoard::BeginPlay()

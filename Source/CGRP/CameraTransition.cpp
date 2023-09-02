@@ -21,10 +21,6 @@ void ACameraTransition::CameraMovement(
             DeltaTime, this->RotationSpeed
         )
     );
-
-    // Logging
-    UE_LOG(LogTemp, Log, TEXT("Actor Location %s"), *camera->GetActorLocation().ToString());
-    UE_LOG(LogTemp, Log, TEXT("Camera Rotation %s"), *camera->GetActorRotation().ToString());
 }
 
 // Sets default values

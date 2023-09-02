@@ -230,7 +230,7 @@ void AChessBoard::Tick(float DeltaTime)
 		if (item != NULL)
 		{
 			// item->SetMaterial(this->HoverMaterial);
-			item->ScaleByFactor(this->HoverScaleFactor);
+			item->ScaleByFactor(this->HoverScaleFactor, this->HoverScaleSpeed);
 			// this->LastHoverItem = item;
 		}
 	}

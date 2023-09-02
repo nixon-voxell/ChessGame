@@ -18,6 +18,7 @@ protected:
 	UMaterial* OriginMaterial;
 	FVector OriginScale;
 	FVector TargetScale;
+	double ScaleSpeed = 1.0;
 
 	virtual void BeginPlay() override;
 
@@ -25,7 +26,7 @@ public:
 	void SetOriginMaterial(UMaterial* Material);
 	void SetMaterial(UMaterial* Material);
 	void ResetMaterial();
-	void ScaleByFactor(double Factor);
+	void ScaleByFactor(double Factor, double Speed);
 	virtual void Tick(float DeltaTime) override;
 
 	AChessItem();

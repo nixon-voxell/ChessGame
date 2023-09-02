@@ -39,6 +39,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	double HoverScaleFactor = 1.2;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	double HoverScaleSpeed = 10.0;
+
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	FPieceConfig WhiteConfig;
 

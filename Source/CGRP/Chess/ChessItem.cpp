@@ -30,9 +30,10 @@ void AChessItem::BeginPlay()
 	this->TargetScale = this->OriginScale;
 }
 
-void AChessItem::ScaleByFactor(double Factor)
+void AChessItem::ScaleByFactor(double Factor, double Speed)
 {
 	this->TargetScale = this->OriginScale * Factor;
+	this->ScaleSpeed = Speed;
 }
 
 
@@ -42,10 +43,10 @@ void AChessItem::Tick(float DeltaTime)
 
 	FVector scale = this->GetActorRelativeScale3D();
 
-	scale = FMath::Lerp(scale, this->TargetScale, DeltaTime * 10);
+	scale = FMath::Lerp(scale, this->TargetScale, DeltaTime * this->ScaleSpeed);
 	FVector diff = scale - this->TargetScale;
 
-	if (diff.Size() < 0.1)
+	if (diff.Size() < 0.02)
 	{
 		this->TargetScale = this->OriginScale;
 	}

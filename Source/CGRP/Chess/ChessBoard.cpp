@@ -177,6 +177,10 @@ void AChessBoard::MouseLeftClicked()
 						if (capturedPiece != NULL)
 						{
 							// TODO
+							if (capturedPiece->Type == PieceType::WhiteKing)
+							{
+								capturedPiece->IsBlack ? this->WhiteWin() : this->BlackWin();
+							}
 						}
 					}
 				}
@@ -318,6 +322,11 @@ void AChessBoard::AcceptBoardIndex(int32 Index, UMaterial* Material)
 	this->AcceptedIndices.Add(Index);
 }
 
+void AChessBoard::Win()
+{
+	this->CurrHoverType = HoverType::None;
+}
+
 void AChessBoard::StartWhiteTurn()
 {
 	this->CurrHoverType = HoverType::WhitePiece;
@@ -328,6 +337,18 @@ void AChessBoard::StartBlackTurn()
 {
 	this->CurrHoverType = HoverType::BlackPiece;
 	this->OnStartBlackTurn();
+}
+
+void AChessBoard::WhiteWin()
+{
+	this->Win();
+	this->OnWhiteWin();
+}
+
+void AChessBoard::BlackWin()
+{
+	this->Win();
+	this->OnBlackWin();
 }
 
 void AChessBoard::BeginPlay()

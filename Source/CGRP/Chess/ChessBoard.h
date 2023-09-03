@@ -91,12 +91,19 @@ protected:
 	void MouseLeftClicked();
 	void ShowPieceNextMovement(APieceItem* PieceItem);
 	void AcceptBoardIndex(int32 Index, UMaterial* Material);
+	void Win();
 
 	UFUNCTION(BlueprintCallable, Category = "CPP ChessBoard")
 	void StartWhiteTurn();
 
 	UFUNCTION(BlueprintCallable, Category = "CPP ChessBoard")
 	void StartBlackTurn();
+
+	UFUNCTION(BlueprintCallable, Category = "CPP ChessBoard")
+	void WhiteWin();
+
+	UFUNCTION(BlueprintCallable, Category = "CPP ChessBoard")
+	void BlackWin();
 
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable, Category = "CPP ChessBoard")
 	void OnStartWhiteTurn();

@@ -155,6 +155,7 @@ void AChessBoard::MouseLeftClicked()
 		}
 
 		bool canShowNextMove = false;
+		bool canSwitchSide = false;
 
 		switch (this->CurrHoverType)
 		{
@@ -165,7 +166,7 @@ void AChessBoard::MouseLeftClicked()
 					// TODO: Move piece if board index is accepted
 					if (this->AcceptedIndices.Contains(item->BoardIndex))
 					{
-						
+						canSwitchSide = true;
 					}
 				}
 				break;
@@ -192,6 +193,11 @@ void AChessBoard::MouseLeftClicked()
 			pieceItem->SetMaterial(this->SelectionMaterial);
 			this->ShowPieceNextMovement(pieceItem);
 			this->CurrHoverType = HoverType::Tile;
+		}
+
+		if (canSwitchSide)
+		{
+			this->LastSelectedPiece->IsBlack ? this->StartWhiteTurn() : this->StartBlackTurn();
 		}
 
 		return;

@@ -276,6 +276,13 @@ void AChessBoard::ShowPieceNextMovement(APieceItem* PieceItem)
 				break;
 			}
 
+			// Ignore if this movement is for first step only and
+			// piece is not at it's origin location
+			if (movement->FirstStepOnly && !PieceItem->IsAtOrigin())
+			{
+				break;
+			}
+
 			// Check if anything is blocking
 			APieceItem* offsetPiece = this->PieceLayout.GetPiece(offsetIndex);
 			if (offsetPiece != NULL)

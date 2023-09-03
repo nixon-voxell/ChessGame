@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "Engine/DataTable.h"
 
-#include "ChessItem.h"
+#include "PieceItem.h"
 #include "ChessPiece.h"
 #include "ChessPieceBundle.generated.h"
 
@@ -36,11 +36,11 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FChessPiece KingPiece;
 
-	AChessItem* PieceItems[7];
+	APieceItem* PieceItems[7];
 	FChessPiece* ChessPieces[7];
 
 	void Initialize();
-	AChessItem* GetPieceItem(int32 Index);
+	APieceItem* GetPieceItem(int32 Index);
 	FChessPiece* GetChessPiece(int32 Index);
 
 	FChessPieceBundle();

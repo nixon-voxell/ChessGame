@@ -31,4 +31,5 @@ FChessBoardLayout::FChessBoardLayout()
 
 FChessBoardLayout::~FChessBoardLayout()
 {
+	this->Layout.Empty();
 }

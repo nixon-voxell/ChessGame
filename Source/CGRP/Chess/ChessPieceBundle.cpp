@@ -8,7 +8,7 @@ FChessPiece* FChessPieceBundle::GetChessPiece(int32 Index)
 	return this->ChessPieces[Index];
 }
 
-AChessItem* FChessPieceBundle::GetPieceItem(int32 Index)
+APieceItem* FChessPieceBundle::GetPieceItem(int32 Index)
 {
 	return this->PieceItems[Index];
 }

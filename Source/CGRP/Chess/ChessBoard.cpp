@@ -4,12 +4,12 @@
 #include "ChessBoard.h"
 #include "../ChessUtil/MovementUtil.h"
 
-AChessItem* AChessBoard::SpawnChessPiece(int32 x, int32 y, FChessBoardLayout* BoardLayout)
+APieceItem* AChessBoard::SpawnChessPiece(int32 x, int32 y, FChessBoardLayout* BoardLayout)
 {
 	int32 boardIndex = x + y * 8;
 	int32 pieceIndex = BoardLayout->GetPieceIndex(boardIndex);
 	bool isBlack = pieceIndex < 0;
-	AChessItem* chessPiece = this->ChessPieceBundle.GetPieceItem(FMath::Abs(pieceIndex));
+	APieceItem* chessPiece = this->ChessPieceBundle.GetPieceItem(FMath::Abs(pieceIndex));
 
 	// NULL indicates that there shouldn't be any chess pieces there
 	if (chessPiece == NULL)
@@ -89,26 +89,32 @@ void AChessBoard::HoverUpdate()
 			return;
 		}
 
-		if (this->CurrHoverType == HoverType::Tile)
+		bool canScale = false;
+
+		switch (this->CurrHoverType)
 		{
-			// Must not be a piece item
-			if (pieceItem == NULL)
-			{
-				item->ScaleByFactor(this->HoverScaleFactor, this->HoverScaleSpeed);
-			}
+			case HoverType::Tile:
+				// Must not be a piece item
+				canScale = pieceItem == NULL;
+				break;
+
+			case HoverType::WhitePiece:
+				// Only white piece
+				canScale = pieceItem != NULL && !pieceItem->IsBlack;
+				break;
+
+			case HoverType::BlackPiece:
+				// Only black piece
+				canScale = pieceItem != NULL && pieceItem->IsBlack;
+				break;
+
+			default:
+				break;
 		}
-		else if (pieceItem != NULL) // Must be a piece item
+
+		if (canScale)
 		{
-			// Only white piece
-			if (this->CurrHoverType == HoverType::WhitePiece && !pieceItem->IsBlack)
-			{
-				item->ScaleByFactor(this->HoverScaleFactor, this->HoverScaleSpeed);
-			}
-			// Only black piece
-			else if (this->CurrHoverType == HoverType::BlackPiece && pieceItem->IsBlack)
-			{
-				item->ScaleByFactor(this->HoverScaleFactor, this->HoverScaleSpeed);
-			}
+			item->ScaleByFactor(this->HoverScaleFactor, this->HoverScaleSpeed);
 		}
 	}
 }
@@ -148,34 +154,56 @@ void AChessBoard::MouseLeftClicked()
 			return;
 		}
 
-		if (this->CurrHoverType == HoverType::Tile)
+		bool canShowNextMove = false;
+
+		switch (this->CurrHoverType)
 		{
-			// Must not be a piece item
-			if (pieceItem == NULL)
-			{
-				// TODO: Check eligibility of selected tile
-			}
+			case HoverType::Tile:
+				// Must not be a piece item
+				if (pieceItem == NULL)
+				{
+					// TODO: Move piece if board index is accepted
+					if (this->AcceptedIndices.Contains(item->BoardIndex))
+					{
+						
+					}
+				}
+				break;
+
+			case HoverType::WhitePiece:
+				// Only white piece
+				canShowNextMove = pieceItem != NULL && !pieceItem->IsBlack;
+				break;
+
+			case HoverType::BlackPiece:
+				// Only black piece
+				canShowNextMove = pieceItem != NULL && pieceItem->IsBlack;
+				break;
+
+			default:
+				break;
 		}
-		else if (pieceItem != NULL) // Must be a piece item
+
+
+		this->AcceptedIndices.Empty();
+
+		if (canShowNextMove)
 		{
-			// Only white piece
-			if (this->CurrHoverType == HoverType::WhitePiece && !pieceItem->IsBlack)
-			{
-				pieceItem->SetMaterial(this->SelectionMaterial);
-				this->ShowPieceNextMovement(pieceItem);
-			}
-			// Only black piece
-			else if (this->CurrHoverType == HoverType::BlackPiece && pieceItem->IsBlack)
-			{
-				pieceItem->SetMaterial(this->SelectionMaterial);
-				this->ShowPieceNextMovement(pieceItem);
-			}
+			pieceItem->SetMaterial(this->SelectionMaterial);
+			this->ShowPieceNextMovement(pieceItem);
+			this->CurrHoverType = HoverType::Tile;
 		}
+
+		return;
 	}
+
+	this->AcceptedIndices.Empty();
 }
 
 void AChessBoard::ShowPieceNextMovement(APieceItem* PieceItem)
 {
+	this->LastSelectedPiece = PieceItem;
+
 	// Get chess piece table
 	PieceType type = PieceItem->Type;
 	FChessPiece* chessPiece = this->ChessPieceBundle.GetChessPiece((int32)type);
@@ -221,7 +249,7 @@ void AChessBoard::ShowPieceNextMovement(APieceItem* PieceItem)
 			}
 
 			// Check if anything is blocking
-			int32 offsetPieceType = this->CurrBoardLayout.GetPieceIndex(offsetIndex);
+			int32 offsetPieceType = (int32)this->PieceLayout.GetPieceType(offsetIndex);
 			if (offsetPieceType != (int32)PieceType::None)
 			{
 				bool isEnemy = PieceItem->IsBlack && offsetPieceType > 0 ||
@@ -229,7 +257,7 @@ void AChessBoard::ShowPieceNextMovement(APieceItem* PieceItem)
 
 				if (isEnemy && movement->IsCapture)
 				{
-					this->ChessTiles[offsetIndex]->SetMaterial(this->CaptureMaterial);
+					this->AcceptBoardIndex(offsetIndex, this->CaptureMaterial);
 				}
 
 				// Break anyways since something is blocking us
@@ -238,7 +266,7 @@ void AChessBoard::ShowPieceNextMovement(APieceItem* PieceItem)
 
 			if (movement->IsMovement)
 			{
-				this->ChessTiles[offsetIndex]->SetMaterial(this->MovementMaterial);
+				this->AcceptBoardIndex(offsetIndex, this->MovementMaterial);
 			}
 
 			// Break out of loop if it is not a direction
@@ -248,8 +276,12 @@ void AChessBoard::ShowPieceNextMovement(APieceItem* PieceItem)
 			}
 		}
 	}
+}
 
-	this->LastSelectedPiece = PieceItem;
+void AChessBoard::AcceptBoardIndex(int32 Index, UMaterial* Material)
+{
+	this->ChessTiles[Index]->SetMaterial(Material);
+	this->AcceptedIndices.Add(Index);
 }
 
 void AChessBoard::StartWhiteTurn()
@@ -272,14 +304,17 @@ void AChessBoard::BeginPlay()
 	this->InitBoardLayout = this->InitBoardLayoutRow.GetRow<FChessBoardLayout>(
 		this->InitBoardLayoutRow.RowName.ToString()
 	);
-	this->CurrBoardLayout.CopyBoardLayout(this->InitBoardLayout);
 
 	// Generate chess tiles and chess pieces
 	for (int y = 0; y < 8; y++)
 	{
 		for (int x = 0; x < 8; x++)
 		{
-			AChessItem* chessPiece = this->SpawnChessPiece(x, y, this->InitBoardLayout);
+			int32 boardIndex = x + y * 8;
+			APieceItem* chessPiece = this->SpawnChessPiece(x, y, this->InitBoardLayout);
+
+			this->PieceLayout.SetPiece(boardIndex, chessPiece);
+
 			if (chessPiece != NULL)
 			{
 				this->ChessPieces.Add(chessPiece);

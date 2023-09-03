@@ -9,6 +9,7 @@
 #include "ChessItem.h"
 #include "ChessPieceBundle.h"
 #include "ChessBoardLayout.h"
+#include "PieceLayout.h"
 #include "PieceConfig.h"
 #include "PieceType.h"
 #include "HoverType.h"
@@ -72,20 +73,24 @@ protected:
 	// variables
 	APlayerController* Controller;
 	FChessBoardLayout* InitBoardLayout;
-	FChessBoardLayout CurrBoardLayout;
+
+	FPieceLayout PieceLayout;
 
 	TArray<AChessItem*> ChessTiles;
-	TArray<AChessItem*> ChessPieces;
+	TArray<APieceItem*> ChessPieces;
 
 	APieceItem* LastSelectedPiece;
+	// Board indices that are accepted for movement
+	TArray<int32> AcceptedIndices;
 
 	// functions
-	AChessItem* SpawnChessPiece(int32 x, int32 y, FChessBoardLayout* BoardLayout);
+	APieceItem* SpawnChessPiece(int32 x, int32 y, FChessBoardLayout* BoardLayout);
 	AChessItem* SpawnChessTile(int32 x, int32 y);
 
 	void HoverUpdate();
 	void MouseLeftClicked();
 	void ShowPieceNextMovement(APieceItem* PieceItem);
+	void AcceptBoardIndex(int32 Index, UMaterial* Material);
 
 	UFUNCTION(BlueprintCallable, Category = "CPP_ChessBoard")
 	void StartWhiteTurn();

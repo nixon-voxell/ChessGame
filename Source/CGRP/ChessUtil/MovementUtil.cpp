@@ -18,3 +18,10 @@ bool MovementUtil::CheckYOffsetValidity(int32 OriginIndex, int32 OffsetIndex, in
 	return (offsetRowNumber - originRowNumber) == yOffset;
 }
 
+FVector MovementUtil::GetGridLocation(int32 Count, int32 Width, double Size)
+{
+	int32 y = Count / Width;
+	int32 x = Count - y * Width;
+
+	return FVector(x * Size, y * Size, 0.0);
+}

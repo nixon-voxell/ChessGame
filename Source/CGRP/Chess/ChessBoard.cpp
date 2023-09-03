@@ -176,11 +176,7 @@ void AChessBoard::MouseLeftClicked()
 						// Capture piece if available
 						if (capturedPiece != NULL)
 						{
-							// TODO
-							if (capturedPiece->Type == PieceType::WhiteKing)
-							{
-								capturedPiece->IsBlack ? this->WhiteWin() : this->BlackWin();
-							}
+							this->CapturePiece(capturedPiece);
 						}
 					}
 				}
@@ -320,6 +316,34 @@ void AChessBoard::AcceptBoardIndex(int32 Index, UMaterial* Material)
 {
 	this->ChessTiles[Index]->SetMaterial(Material);
 	this->AcceptedIndices.Add(Index);
+}
+
+void AChessBoard::CapturePiece(APieceItem* CapturedPiece)
+{
+	FVector location;
+	if (CapturedPiece->IsBlack)
+	{
+		location = MovementUtil::GetGridLocation(
+			this->CapturedBlackCount, 3, this->TileSize
+		);
+		location.X = -location.X;
+		this->CapturedBlackCount += 1;
+	}
+	else if (!CapturedPiece->IsBlack)
+	{
+		location = MovementUtil::GetGridLocation(
+			this->CapturedBlackCount, 3, this->TileSize
+		);
+		location.Y = this->TileSize * 8 - location.Y;
+		this->CapturedWhiteCount += 1;
+	}
+
+	CapturedPiece->SetActorLocation(location);
+
+	if (CapturedPiece->Type == PieceType::WhiteKing)
+	{
+		CapturedPiece->IsBlack ? this->WhiteWin() : this->BlackWin();
+	}
 }
 
 void AChessBoard::Win()

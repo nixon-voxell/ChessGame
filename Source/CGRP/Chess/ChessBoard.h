@@ -83,6 +83,10 @@ protected:
 	// Board indices that are accepted for movement
 	TArray<int32> AcceptedIndices;
 
+	// Keep track of captured count
+	int32 CapturedWhiteCount;
+	int32 CapturedBlackCount;
+
 	// functions
 	APieceItem* SpawnChessPiece(int32 x, int32 y, FChessBoardLayout* BoardLayout);
 	AChessItem* SpawnChessTile(int32 x, int32 y);
@@ -91,6 +95,7 @@ protected:
 	void MouseLeftClicked();
 	void ShowPieceNextMovement(APieceItem* PieceItem);
 	void AcceptBoardIndex(int32 Index, UMaterial* Material);
+	void CapturePiece(APieceItem* CapturedPiece);
 	void Win();
 
 	UFUNCTION(BlueprintCallable, Category = "CPP ChessBoard")

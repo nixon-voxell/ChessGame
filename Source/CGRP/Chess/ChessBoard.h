@@ -104,6 +104,12 @@ protected:
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable, Category = "CPP ChessBoard")
 	void OnStartBlackTurn();
 
+	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable, Category = "CPP ChessBoard")
+	void OnWhiteWin();
+
+	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable, Category = "CPP ChessBoard")
+	void OnBlackWin();
+
 	virtual void BeginPlay() override;
 
 public:

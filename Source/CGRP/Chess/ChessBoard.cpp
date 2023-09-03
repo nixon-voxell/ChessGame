@@ -31,7 +31,7 @@ APieceItem* AChessBoard::SpawnChessPiece(int32 x, int32 y, FChessBoardLayout* Bo
 	// Assign material
 	spawnedPiece->SetOriginMaterial(pieceConfig.Material);
 
-	// Assign board index
+	// Initialize chess piece
 	spawnedPiece->Initialize(boardIndex, isBlack);
 	return spawnedPiece;
 }
@@ -149,10 +149,10 @@ void AChessBoard::MouseLeftClicked()
 		APieceItem* pieceItem = Cast<APieceItem>(item);
 
 		// Ignore if nothing is being selected
-		if (item == NULL)
-		{
-			return;
-		}
+		// if (item == NULL)
+		// {
+		// 	return;
+		// }
 
 		bool canShowNextMove = false;
 		bool canSwitchSide = false;
@@ -167,6 +167,17 @@ void AChessBoard::MouseLeftClicked()
 					if (this->AcceptedIndices.Contains(item->BoardIndex))
 					{
 						canSwitchSide = true;
+						// Move piece to new location
+						this->LastSelectedPiece->SetActorLocation(
+							item->GetActorLocation() + FVector(0.0, 0.0, this->ChessPieceElevation)
+						);
+						APieceItem* capturedPiece = this->PieceLayout.MovePiece(this->LastSelectedPiece->BoardIndex, item->BoardIndex);
+
+						// Capture piece if available
+						if (capturedPiece != NULL)
+						{
+							// TODO
+						}
 					}
 				}
 				break;
@@ -185,8 +196,19 @@ void AChessBoard::MouseLeftClicked()
 				break;
 		}
 
-
 		this->AcceptedIndices.Empty();
+
+		if (this->LastSelectedPiece != NULL && this->CurrHoverType == HoverType::Tile)
+		{
+			if (canSwitchSide)
+			{
+				this->LastSelectedPiece->IsBlack ? this->StartWhiteTurn() : this->StartBlackTurn();
+			}
+			else
+			{
+				this->LastSelectedPiece->IsBlack ? this->StartBlackTurn() : this->StartWhiteTurn();
+			}
+		}
 
 		if (canShowNextMove)
 		{
@@ -194,16 +216,16 @@ void AChessBoard::MouseLeftClicked()
 			this->ShowPieceNextMovement(pieceItem);
 			this->CurrHoverType = HoverType::Tile;
 		}
-
-		if (canSwitchSide)
-		{
-			this->LastSelectedPiece->IsBlack ? this->StartWhiteTurn() : this->StartBlackTurn();
-		}
-
-		return;
 	}
+	else
+	{
+		this->AcceptedIndices.Empty();
 
-	this->AcceptedIndices.Empty();
+		if (this->LastSelectedPiece != NULL && this->CurrHoverType == HoverType::Tile)
+		{
+			this->LastSelectedPiece->IsBlack ? this->StartBlackTurn() : this->StartWhiteTurn();
+		}
+	}
 }
 
 void AChessBoard::ShowPieceNextMovement(APieceItem* PieceItem)
@@ -255,11 +277,10 @@ void AChessBoard::ShowPieceNextMovement(APieceItem* PieceItem)
 			}
 
 			// Check if anything is blocking
-			int32 offsetPieceType = (int32)this->PieceLayout.GetPieceType(offsetIndex);
-			if (offsetPieceType != (int32)PieceType::None)
+			APieceItem* offsetPiece = this->PieceLayout.GetPiece(offsetIndex);
+			if (offsetPiece != NULL)
 			{
-				bool isEnemy = PieceItem->IsBlack && offsetPieceType > 0 ||
-					!PieceItem->IsBlack && offsetPieceType < 0;
+				bool isEnemy = PieceItem->IsBlack != offsetPiece->IsBlack;
 
 				if (isEnemy && movement->IsCapture)
 				{

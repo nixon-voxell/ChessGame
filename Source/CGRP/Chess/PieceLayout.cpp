@@ -1,18 +1,16 @@
 #include "PieceLayout.h"
 
-PieceType FPieceLayout::GetPieceType(int32 BoardIndex)
+void FPieceLayout::SetPiece(int32 BoardIndex, APieceItem* PieceItem)
 {
-	APieceItem* piece = this->Layout[BoardIndex];
-
-	if (piece == NULL)
-	{
-		return PieceType::None;
-	}
-
-	return this->Layout[BoardIndex]->Type;
+	this->Layout[BoardIndex] = PieceItem;
 }
 
-void FPieceLayout::MovePiece(int32 OriginIndex, int32 TargetIndex)
+APieceItem* FPieceLayout::GetPiece(int32 BoardIndex)
+{
+	return this->Layout[BoardIndex];
+}
+
+APieceItem* FPieceLayout::MovePiece(int32 OriginIndex, int32 TargetIndex)
 {
 	APieceItem* originPiece = this->Layout[OriginIndex];
 	APieceItem* targetPiece = this->Layout[TargetIndex];
@@ -30,14 +28,11 @@ void FPieceLayout::MovePiece(int32 OriginIndex, int32 TargetIndex)
 	}
 
 	// Transfer piece to new location
-	this->Layout[TargetIndex] = this->Layout[OriginIndex];
+	this->Layout[TargetIndex] = originPiece;
 	// Empty origin piece location
 	this->Layout[OriginIndex] = NULL;
-}
 
-void FPieceLayout::SetPiece(int32 BoardIndex, APieceItem* PieceItem)
-{
-	this->Layout[BoardIndex] = PieceItem;
+	return targetPiece;
 }
 
 FPieceLayout::FPieceLayout()

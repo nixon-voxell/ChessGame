@@ -34,7 +34,7 @@ public:
 	FChessPieceBundle ChessPieceBundle;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	double ChessPieceElevation = 50.0;
+	double ChessPieceElevation = 100.0;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	double TileSize = 100.0;

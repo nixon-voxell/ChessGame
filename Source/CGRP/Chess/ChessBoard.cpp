@@ -314,11 +314,13 @@ void AChessBoard::AcceptBoardIndex(int32 Index, UMaterial* Material)
 void AChessBoard::StartWhiteTurn()
 {
 	this->CurrHoverType = HoverType::WhitePiece;
+	this->OnStartWhiteTurn();
 }
 
 void AChessBoard::StartBlackTurn()
 {
 	this->CurrHoverType = HoverType::BlackPiece;
+	this->OnStartBlackTurn();
 }
 
 void AChessBoard::BeginPlay()

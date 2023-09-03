@@ -92,11 +92,17 @@ protected:
 	void ShowPieceNextMovement(APieceItem* PieceItem);
 	void AcceptBoardIndex(int32 Index, UMaterial* Material);
 
-	UFUNCTION(BlueprintCallable, Category = "CPP_ChessBoard")
+	UFUNCTION(BlueprintCallable, Category = "CPP ChessBoard")
 	void StartWhiteTurn();
 
-	UFUNCTION(BlueprintCallable, Category = "CPP_ChessBoard")
+	UFUNCTION(BlueprintCallable, Category = "CPP ChessBoard")
 	void StartBlackTurn();
+
+	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable, Category = "CPP ChessBoard")
+	void OnStartWhiteTurn();
+
+	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable, Category = "CPP ChessBoard")
+	void OnStartBlackTurn();
 
 	virtual void BeginPlay() override;
 

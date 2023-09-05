@@ -13,6 +13,7 @@
 #include "PieceConfig.h"
 #include "PieceType.h"
 #include "HoverType.h"
+#include "../Audio/MusicManager.h"
 #include "ChessBoard.generated.h"
 
 UCLASS()
@@ -68,6 +69,9 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	HoverType CurrHoverType;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	AMusicManager* MusicManager;
 
 protected:
 	// variables

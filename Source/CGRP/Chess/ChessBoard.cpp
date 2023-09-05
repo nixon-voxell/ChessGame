@@ -377,17 +377,20 @@ void AChessBoard::CapturePiece(APieceItem* CapturedPiece)
 void AChessBoard::Win()
 {
 	this->CurrHoverType = HoverType::None;
+	this->MusicManager->PlayWinMusic();
 }
 
 void AChessBoard::StartWhiteTurn()
 {
 	this->CurrHoverType = HoverType::WhitePiece;
+	this->MusicManager->PlayMoveChessSound();
 	this->OnStartWhiteTurn();
 }
 
 void AChessBoard::StartBlackTurn()
 {
 	this->CurrHoverType = HoverType::BlackPiece;
+	this->MusicManager->PlayMoveChessSound();
 	this->OnStartBlackTurn();
 }
 

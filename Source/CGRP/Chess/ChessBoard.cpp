@@ -114,7 +114,10 @@ void AChessBoard::HoverUpdate()
 
 		if (canScale)
 		{
-			item->ScaleByFactor(this->HoverScaleFactor, this->HoverScaleSpeed);
+			if (item->BoardIndex >= 0)
+			{
+				item->ScaleByFactor(this->HoverScaleFactor, this->HoverScaleSpeed);
+			}
 		}
 	}
 }
@@ -212,9 +215,12 @@ void AChessBoard::MouseLeftClicked()
 
 		if (canShowNextMove)
 		{
-			pieceItem->SetMaterial(this->SelectionMaterial);
-			this->ShowPieceNextMovement(pieceItem);
-			this->CurrHoverType = HoverType::Tile;
+			if (pieceItem->BoardIndex >= 0)
+			{
+				pieceItem->SetMaterial(this->SelectionMaterial);
+				this->ShowPieceNextMovement(pieceItem);
+				this->CurrHoverType = HoverType::Tile;
+			}
 		}
 	}
 	else
@@ -278,9 +284,25 @@ void AChessBoard::ShowPieceNextMovement(APieceItem* PieceItem)
 
 			// Ignore if this movement is for first step only and
 			// piece is not at it's origin location
-			if (movement->FirstStepOnly && !PieceItem->IsAtOrigin())
+			if (movement->FirstStepOnly)
 			{
-				break;
+				if (!PieceItem->IsAtOrigin())
+				{
+					break;
+				}
+
+				// Special case for pawn only
+				if (PieceItem->Type == PieceType::WhitePawn)
+				{
+					// Check if anything is blocking the pawn in front
+					int32 specialOffsetIndex = MovementUtil::OffsetFromXY(0, multiplier);
+					specialOffsetIndex += PieceItem->BoardIndex;
+
+					if (this->PieceLayout.GetPiece(specialOffsetIndex) != NULL)
+					{
+						break;
+					}
+				}
 			}
 
 			// Check if anything is blocking
@@ -324,17 +346,21 @@ void AChessBoard::CapturePiece(APieceItem* CapturedPiece)
 	if (CapturedPiece->IsBlack)
 	{
 		location = MovementUtil::GetGridLocation(
-			this->CapturedBlackCount, 3, this->TileSize
+			this->CapturedBlackCount, 2, this->TileSize
 		);
-		location.X = -location.X;
+		location.X = location.X + this->TileSize * 2;
+		// location.Y = -location.Y - this->TileSize;
+
 		this->CapturedBlackCount += 1;
 	}
 	else if (!CapturedPiece->IsBlack)
 	{
 		location = MovementUtil::GetGridLocation(
-			this->CapturedBlackCount, 3, this->TileSize
+			this->CapturedWhiteCount, 2, this->TileSize
 		);
-		location.Y = this->TileSize * 8 - location.Y;
+		location.Y = this->TileSize * 7 - location.Y;
+		location.X = -this->TileSize * 9 - location.X;
+
 		this->CapturedWhiteCount += 1;
 	}
 

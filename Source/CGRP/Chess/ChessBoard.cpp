@@ -209,7 +209,9 @@ void AChessBoard::MouseLeftClicked()
 			}
 			else
 			{
-				this->LastSelectedPiece->IsBlack ? this->StartBlackTurn() : this->StartWhiteTurn();
+				this->LastSelectedPiece->IsBlack ?
+					this->CurrHoverType = HoverType::BlackPiece :
+					this->CurrHoverType = HoverType::WhitePiece;
 			}
 		}
 

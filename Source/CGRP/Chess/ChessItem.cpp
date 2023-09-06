@@ -36,7 +36,6 @@ void AChessItem::ScaleByFactor(double Factor, double Speed)
 	this->ScaleSpeed = Speed;
 }
 
-
 void AChessItem::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);

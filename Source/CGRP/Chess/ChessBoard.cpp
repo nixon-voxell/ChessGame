@@ -151,12 +151,6 @@ void AChessBoard::MouseLeftClicked()
 		AChessItem* item = Cast<AChessItem>(hitResult.GetActor());
 		APieceItem* pieceItem = Cast<APieceItem>(item);
 
-		// Ignore if nothing is being selected
-		// if (item == NULL)
-		// {
-		// 	return;
-		// }
-
 		bool canShowNextMove = false;
 		bool canSwitchSide = false;
 
@@ -166,7 +160,7 @@ void AChessBoard::MouseLeftClicked()
 				// Must not be a piece item
 				if (pieceItem == NULL)
 				{
-					// TODO: Move piece if board index is accepted
+					// Move piece if board index is accepted
 					if (this->AcceptedIndices.Contains(item->BoardIndex))
 					{
 						canSwitchSide = true;

@@ -27,12 +27,6 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sound Effects")
 	USoundBase* MoveChessSound;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sound Effects")
-	USoundBase* StartButtonSound;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sound Effects")
-	USoundBase* EndButtonSound;
-
 	// Sets default values for this actor's properties
 	AMusicManager();
 
@@ -55,10 +49,4 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Music Control")
 	void PlayMoveChessSound();
-
-	UFUNCTION(BlueprintCallable, Category = "Music Control")
-	void PlayStartButtonSound();
-
-	UFUNCTION(BlueprintCallable, Category = "Music Control")
-	void PlayEndButtonSound();
 };

@@ -57,13 +57,3 @@ void AMusicManager::PlayMoveChessSound()
 	// Play the move chess sound without stopping the BGM
 	UGameplayStatics::PlaySoundAtLocation(this, MoveChessSound, GetActorLocation());
 }
-
-void AMusicManager::PlayStartButtonSound()
-{
-	UGameplayStatics::PlaySoundAtLocation(this, StartButtonSound, GetActorLocation());
-}
-
-void AMusicManager::PlayEndButtonSound()
-{
-	UGameplayStatics::PlaySoundAtLocation(this, EndButtonSound, GetActorLocation());
-}
